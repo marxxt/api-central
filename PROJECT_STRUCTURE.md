@@ -1,4 +1,4 @@
-universal-graphql-gateway/
+api-central/
 │
 ├── app/
 │   ├── __init__.py

@@ -2,11 +2,11 @@
 
 ## 📆 Phase 1: Project Bootstrap
 
-- [ ] Initialize project using `poetry`
-- [ ] Create basic FastAPI app
-- [ ] Set up GraphQL with Strawberry
-- [ ] Add `.env` support with PydanticSettings
-- [ ] Define folder structure:
+- [x] Initialize project using `poetry`
+- [x] Create basic FastAPI app
+- [x] Set up GraphQL with Strawberry
+- [x] Add `.env` support with PydanticSettings
+- [x] Define folder structure:
   - `/auth`
   - `/adapters`
   - `/models`
@@ -18,51 +18,51 @@
 
 ## 📆 Phase 2: Core Interfaces & Models
 
-- [ ] Define `AbstractStorageAdapter` (with `get_user`, `store_user`)
-- [ ] Create `UserModel`, `ActivityModel`, etc. using Pydantic v2
-- [ ] Define reusable error/exception classes
+- [x] Define `AbstractStorageAdapter` (with `get_user`, `store_user`)
+- [x] Create `UserModel`, `ActivityModel`, etc. using Pydantic v2
+- [x] Define reusable error/exception classes
 
 ---
 
 ## 📆 Phase 3: Adapter Implementations
 
-- [ ] `SupabaseAdapter` using REST/SDK
-- [ ] `RedisAdapter` using `redis.asyncio`
-- [ ] `FirestoreAdapter` using `google-cloud-firestore`
+- [x] `SupabaseAdapter` using REST/SDK
+- [x] `RedisAdapter` using `redis.asyncio`
+- [x] `FirestoreAdapter` using `google-cloud-firestore`
 
 ---
 
 ## 📆 Phase 4: Authentication
 
-- [ ] Middleware to decode and verify Supabase JWTs
-- [ ] Inject user info into `request.state.user`
-- [ ] Protect resolvers with authorization guard
+- [x] Middleware to decode and verify Supabase JWTs
+- [x] Inject user info into `request.state.user`
+- [x] Protect resolvers with authorization guard
 
----[x
+---
 
 ## 📆 Phase 5: GraphQL Schema
 
-- [ ] Define schema and types with Strawberry
-- [ ] Add resolvers for:
+- [x] Define schema and types with Strawberry
+- [x] Add resolvers for:
   - `get_user`
   - `get_recent_activity`
   - `store_user_data`
-- ] Validate all resolver IO through Pydantic
+- [x] Validate all resolver IO through Pydantic
 
 ---
 
 ## 📆 Phase 6: Environment & Runtime Config
 
-- [ ] Add support for `.env` and runtime config
-- [ ] Switch active adapter based on ENV (e.g. FIREBASE vs SUPABASE)
+- [x] Add support for `.env` and runtime config
+- [x] Switch active adapter based on ENV (e.g. FIREBASE vs SUPABASE)
 
 ---
 
 ## 📆 Phase 7: Testing
 
-- [ ] Add `pytest` configuration
-- [ ] Mock adapters for unit tests
-- [ ] Write tests for:
+- [x] Add `pytest` configuration
+- [x] Mock adapters for unit tests
+- [x] Write tests for:
   - Auth flow
   - GraphQL resolver logic
   - Adapter edge cases (fallback, 404s, cache misses)
@@ -71,9 +71,9 @@
 
 ## 📆 Phase 8: Docker & DevOps
 
-- [ ] Create `Dockerfile`
-- [ ] Write `docker-compose.yml` for local development
-- [ ] Add health checks and startup logging
+- [x] Create `Dockerfile`
+- [x] Write `docker-compose.yml` for local development
+- [x] Add health checks and startup logging
 
 ---
 
