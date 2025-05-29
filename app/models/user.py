@@ -1,8 +1,13 @@
+import phonenumbers
 from pydantic import BaseModel, EmailStr
-from typing import Optional, List, Literal
+from typing import Annotated, Optional, List, Literal, Union
 from datetime import datetime
 from enum import Enum
+from pydantic_extra_types.phone_numbers import PhoneNumberValidator
 
+from strawberry import ID
+
+PhoneNumberType = Annotated[ Union[str, phonenumbers.PhoneNumber], PhoneNumberValidator(supported_regions=['US'], default_region='US') ]
 
 # Enums
 class Rank(str, Enum):
@@ -18,32 +23,32 @@ class Rank(str, Enum):
 
 # Placeholder for imported Transaction and SNFT
 class Transaction(BaseModel):
-    id: str
+    id: ID
     amount: float
 
 
 class SNFT(BaseModel):
-    id: str
+    id: ID
     token_id: str
 
 
 # Wallet Model
 class Wallet(BaseModel):
-    id: str
-    user_id: str
+    id: ID
+    user_id: ID
     address: str
     balance: float
     currency: Optional[str] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
-    transactions: Optional[List[Transaction]] = None
+    # transactions: Optional[List[Transaction]] = None
     nfts: Optional[List[SNFT]] = None
 
 
 # Profile Model
 class Profile(BaseModel):
-    id: str
-    user_id: str
+    id: ID
+    user_id: ID
     email: Optional[EmailStr] = None
     first_name: Optional[str] = None
     last_name: Optional[str] = None
@@ -55,13 +60,13 @@ class Profile(BaseModel):
     phone: Optional[str] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
-    wallets: Optional[List[Wallet]] = None
+    # wallets: Optional[List[Wallet]] = None
 
 
 # Reputation Model
 class Reputation(BaseModel):
-    id: str
-    user_id: str
+    id: ID
+    user_id: ID
     score: Optional[float] = None
     rank: Optional[Rank] = None
     ranking_percentile: Optional[str] = None
@@ -71,5 +76,10 @@ class Reputation(BaseModel):
 
 
 # Final User Model
-class User(Profile):
-    reputation: Optional[Reputation] = None
+class User(BaseModel):
+    id: Optional[ID]
+    display_name: str
+    email: EmailStr
+    phone: PhoneNumberType
+    user_metadata: object
+        

@@ -1,0 +1,60 @@
+{
+  "commands": [
+    {
+      "label": "🧠 Run FastAPI Dev Server",
+      "description": "Start the central API server (FastAPI) with live reload",
+      "command": "poetry run uvicorn app.main:app --reload --host 0.0.0.0 --port 3000",
+      "type": "shell"
+    },
+    {
+      "label": "✅ Run Tests",
+      "description": "Run all tests with pytest",
+      "command": "poetry run pytest -v",
+      "type": "shell"
+    },
+    {
+      "label": "🧽 Lint with Ruff",
+      "description": "Run ruff linting and formatting",
+      "command": "poetry run ruff check . && poetry run ruff format .",
+      "type": "shell"
+    },
+    {
+      "label": "📝 Generate OpenAPI Docs",
+      "description": "Export FastAPI schema as JSON",
+      "command": "curl http://localhost:3000/openapi.json -o openapi.json",
+      "type": "shell"
+    },
+    {
+      "label": "🐳 Docker Build",
+      "description": "Build Docker image with custom tag",
+      "command": "docker build -t bridges-central-api:${tag} .",
+      "type": "shell",
+      "inputs": [
+        {
+          "name": "tag",
+          "type": "text",
+          "default": "latest",
+          "description": "Image tag (e.g., v1.0.0)"
+        }
+      ]
+    },
+    {
+      "label": "📦 Docker Compose Up",
+      "description": "Start full Bridges API stack",
+      "command": "docker-compose -f docker-compose.dev.yml up --build",
+      "type": "shell"
+    },
+    {
+      "label": "📂 Migrate DB",
+      "description": "Run Alembic migrations",
+      "command": "poetry run alembic upgrade head",
+      "type": "shell"
+    },
+    {
+      "label": "👤 Who Am I?",
+      "description": "Check current developer identity",
+      "command": "git config user.name && git config user.email",
+      "type": "shell"
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 import jwt
-from app.config import settings
+from config import settings
 
 def decode_jwt(token: str) -> dict:
     try:

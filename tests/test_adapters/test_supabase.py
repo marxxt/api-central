@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import AsyncMock
-from app.adapters.supabase_adapter import SupabaseAdapter
-from app.models.user import UserModel
+from adapters.supabase_adapter import SupabaseAdapter
+from models.user import User
 
 @pytest.mark.asyncio
 async def test_get_user_returns_valid_user(monkeypatch):
@@ -14,5 +14,5 @@ async def test_get_user_returns_valid_user(monkeypatch):
     monkeypatch.setattr(adapter, "client", mock_client)
 
     user = await adapter.get_user("abc123")
-    assert isinstance(user, UserModel)
+    assert isinstance(user, User)
     assert user.full_name == "Jane Doe"

@@ -1,6 +1,6 @@
 import pytest
-from app.adapters.firestore_adapter import FirestoreAdapter
-from app.models.user import UserModel
+from adapters.firestore_adapter import FirestoreAdapter
+from models.user import User
 
 @pytest.mark.asyncio
 async def test_firestore_adapter(monkeypatch):

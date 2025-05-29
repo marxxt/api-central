@@ -1,6 +1,6 @@
 import pytest
-from app.adapters.redis_adapter import RedisAdapter
-from app.models.user import UserModel
+from adapters.redis_adapter import RedisAdapter
+from models.user import User
 import json
 
 @pytest.mark.asyncio

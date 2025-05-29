@@ -1,14 +1,14 @@
 import pytest
 from app.schema.resolvers import schema
-from app.models.user import UserModel
+from app.models.user import User
 
 @pytest.mark.asyncio
 async def test_store_user_mutation(monkeypatch):
     class MockAdapter:
-        async def store_user(self, user: UserModel):
+        async def store_user(self, user: User):
             return None
 
-    monkeypatch.setattr("app.adapters.get_adapter", lambda: MockAdapter())
+    monkeypatch.setattr("adapters.get_adapter", lambda: MockAdapter())
 
     query = """
     mutation {

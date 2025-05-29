@@ -1,6 +1,8 @@
 from pydantic import BaseModel
 from typing import Optional, List, Literal
 
+from strawberry import ID
+
 
 # Enums / Literals
 AuctionType = Literal["Whole Project", "Individual Tokens", "RRNFT", "Stay Reward"]
@@ -21,14 +23,14 @@ class ReputationSummary(BaseModel):
 
 # Seller model
 class Seller(BaseModel):
+    user_id: str # Add user_id field to link seller to a user
     name: str
-    reputation: ReputationSummary
     verified: bool
 
 
 # Bid history model
 class BidHistoryEntry(BaseModel):
-    id: str
+    id: ID
     bidder: str
     amount: str
     time: str
