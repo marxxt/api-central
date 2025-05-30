@@ -1,0 +1,5 @@
+name: APIGatewayEngineer
+role: Designs and maintains GraphQL/FastAPI gateway logic.
+tools:
+  - graphql-router
+  - redis-cache

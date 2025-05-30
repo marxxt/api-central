@@ -1,0 +1,24 @@
+id: central_api.orchestration
+version: 1.0
+description: Primary orchestration flow for coordinating central API build across agents.
+
+flow:
+  - step_id: validate-schema
+    agent_id: SchemaValidator
+    prompt: |
+      Review all Pydantic models in the `/types` folder and ensure they align with the needed GraphQL schema for the central API. Identify any inconsistencies or missing fields.
+
+  - step_id: setup-auth
+    agent_id: AuthArchitect
+    prompt: |
+      Implement Supabase JWT auth via FastAPI dependency injection. Ensure role-based access control is established for GraphQL operations.
+
+  - step_id: scaffold-api
+    agent_id: APIGatewayEngineer
+    prompt: |
+      Scaffold the FastAPI + GraphQL gateway using Strawberry. Define schema, types, and basic resolvers for auction, property, token, and reputation services.
+
+  - step_id: integrate-services
+    agent_id: IntegrationAgent
+    prompt: |
+      Connect microservices to GraphQL resolvers. Use Redis for caching high-traffic queries. Ensure non-blocking I/O and observability via Prometheus/OpenTelemetry.

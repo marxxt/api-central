@@ -1,0 +1,3 @@
+name: SchemaValidator
+role: Ensures all models match shared Pydantic types and GraphQL schema integrity.
+tools: []

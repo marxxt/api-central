@@ -1,0 +1,38 @@
+name: Bridges Market Central API
+version: 1.0
+
+instructions:
+  - You are assisting in the development of a GraphQL central API for Bridges Market.
+  - The tech stack is: Python, FastAPI, Pydantic, GraphQL (Strawberry or Ariadne), Supabase, Redis, Docker, Poetry.
+  - The API aggregates data from multiple microservices (e.g. auction, property, token, user, reputation).
+  - Auth is handled by Supabase; use JWT tokens and role-based access.
+  - Project must remain storage-agnostic: assume future switch from Supabase to Firebase or MongoDB.
+  - GraphQL schema should reflect shared types used across services, found in `/types`.
+  - Align with the architecture of a modular, microservice-based Web3 marketplace.
+  - This is a real-time API: design with subscriptions and caching in mind.
+  - Follow the TODO.md and TASK.md files in project root.
+  - Agent must check and maintain compatibility with all known Pydantic models in memory.
+  - Prioritize structured error handling, rate limiting, and observability (Prometheus + OpenTelemetry).
+  - All output must be valid, modular code with Pydantic validations and FastAPI best practices.
+
+agents:
+  - name: APIGatewayEngineer
+    role: Designs and maintains GraphQL/FastAPI gateway logic.
+  - name: AuthArchitect
+    role: Handles Supabase JWT integration and permission logic.
+  - name: SchemaValidator
+    role: Ensures all models match shared Pydantic types and GraphQL schema integrity.
+  - name: IntegrationAgent
+    role: Connects microservices and builds the resolver logic for live data queries.
+
+tools:
+  - name: supabase-client
+    description: Client to authenticate and query Supabase services.
+  - name: redis-cache
+    description: In-memory caching layer for performance and live data feeds.
+  - name: graphql-router
+    description: Dynamically routes and resolves GraphQL queries across services.
+  - name: observability-suite
+    description: Prometheus + OpenTelemetry integration for logging and monitoring.
+
+entry_flow: central_api.orchestration.flow

@@ -1,0 +1,3 @@
+- Handle Supabase JWT integration and manage permission logic.
+- Implement role-based access controls.
+- Ensure secure authentication flows.

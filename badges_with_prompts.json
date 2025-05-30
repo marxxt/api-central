@@ -1,0 +1,533 @@
+[
+  {
+    "id": "91293482-afdd-4977-9e00-04ed04d40238",
+    "slug": "xp-0",
+    "name": "XP Milestone 100",
+    "tier": "\ud83d\udfe2 Common",
+    "description": "Earned 100 XP on the platform.",
+    "image": "ipfs://placeholder/xp-0.png",
+    "generation_prompt": "An intricate digital badge icon representing 'XP Milestone 100', symbolizing Earned 100 XP on the platform. Designed with matte gray glow and layered with brushed steel elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "25ebec42-6f89-4635-b62d-1ee5235584a3",
+    "slug": "xp-1",
+    "name": "XP Milestone 250",
+    "tier": "\ud83d\udd35 Uncommon",
+    "description": "Earned 250 XP on the platform.",
+    "image": "ipfs://placeholder/xp-1.png",
+    "generation_prompt": "An intricate digital badge icon representing 'XP Milestone 250', symbolizing Earned 250 XP on the platform. Designed with luminous blue glow and layered with tempered glass elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "f2cca309-cf49-4e4c-9038-e313f84631af",
+    "slug": "xp-2",
+    "name": "XP Milestone 500",
+    "tier": "\ud83d\udfe3 Rare",
+    "description": "Earned 500 XP on the platform.",
+    "image": "ipfs://placeholder/xp-2.png",
+    "generation_prompt": "An intricate digital badge icon representing 'XP Milestone 500', symbolizing Earned 500 XP on the platform. Designed with radiant violet glow and layered with mystic crystal elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "80065b2a-5240-445b-9275-1a334fd6c2db",
+    "slug": "xp-3",
+    "name": "XP Milestone 1000",
+    "tier": "\ud83d\udfe1 Epic",
+    "description": "Earned 1000 XP on the platform.",
+    "image": "ipfs://placeholder/xp-3.png",
+    "generation_prompt": "An intricate digital badge icon representing 'XP Milestone 1000', symbolizing Earned 1000 XP on the platform. Designed with glowing gold glow and layered with enchanted runes elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "c8ecf2bc-0e09-42a7-8c76-9f8023658a3a",
+    "slug": "xp-4",
+    "name": "XP Milestone 2000",
+    "tier": "\ud83d\udd34 Legendary",
+    "description": "Earned 2000 XP on the platform.",
+    "image": "ipfs://placeholder/xp-4.png",
+    "generation_prompt": "An intricate digital badge icon representing 'XP Milestone 2000', symbolizing Earned 2000 XP on the platform. Designed with molten red-orange glow and layered with mythic flame fractals elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "10531117-de72-4309-b5dd-b6581e490794",
+    "slug": "xp-5",
+    "name": "XP Milestone 3000",
+    "tier": "\u2728 God Tier",
+    "description": "Earned 3000 XP on the platform.",
+    "image": "ipfs://placeholder/xp-5.png",
+    "generation_prompt": "An intricate digital badge icon representing 'XP Milestone 3000', symbolizing Earned 3000 XP on the platform. Designed with divine white-gold glow and layered with celestial stardust and cosmic halo elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "7dffd6b2-a1fe-4e18-8674-1df167bf724d",
+    "slug": "comments-0",
+    "name": "Comment Master 10",
+    "tier": "\ud83d\udfe2 Common",
+    "description": "Posted 10 comments.",
+    "image": "ipfs://placeholder/comments-0.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Comment Master 10', symbolizing Posted 10 comments. Designed with matte gray glow and layered with brushed steel elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "3443a6c6-e785-41c0-9c2a-7476900a4b16",
+    "slug": "comments-1",
+    "name": "Comment Master 50",
+    "tier": "\ud83d\udd35 Uncommon",
+    "description": "Posted 50 comments.",
+    "image": "ipfs://placeholder/comments-1.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Comment Master 50', symbolizing Posted 50 comments. Designed with luminous blue glow and layered with tempered glass elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "0a0f2337-b526-4b1d-b9f4-2ee09ee0d7d9",
+    "slug": "comments-2",
+    "name": "Comment Master 100",
+    "tier": "\ud83d\udfe3 Rare",
+    "description": "Posted 100 comments.",
+    "image": "ipfs://placeholder/comments-2.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Comment Master 100', symbolizing Posted 100 comments. Designed with radiant violet glow and layered with mystic crystal elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "46663efe-0c5c-41ad-9652-6f57d3532ae5",
+    "slug": "comments-3",
+    "name": "Comment Master 250",
+    "tier": "\ud83d\udfe1 Epic",
+    "description": "Posted 250 comments.",
+    "image": "ipfs://placeholder/comments-3.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Comment Master 250', symbolizing Posted 250 comments. Designed with glowing gold glow and layered with enchanted runes elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "0398c2ac-fd51-44a1-b26f-dd06160eee83",
+    "slug": "comments-4",
+    "name": "Comment Master 500",
+    "tier": "\ud83d\udd34 Legendary",
+    "description": "Posted 500 comments.",
+    "image": "ipfs://placeholder/comments-4.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Comment Master 500', symbolizing Posted 500 comments. Designed with molten red-orange glow and layered with mythic flame fractals elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "cb0b232e-091b-4663-becd-6fcd1c02e9a3",
+    "slug": "comments-5",
+    "name": "Comment Master 1000",
+    "tier": "\u2728 God Tier",
+    "description": "Posted 1000 comments.",
+    "image": "ipfs://placeholder/comments-5.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Comment Master 1000', symbolizing Posted 1000 comments. Designed with divine white-gold glow and layered with celestial stardust and cosmic halo elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "c8b81d43-16c5-478a-8922-16446b520d7a",
+    "slug": "kudos-0",
+    "name": "Kudos Magnet 5",
+    "tier": "\ud83d\udfe2 Common",
+    "description": "Received 5 kudos from peers.",
+    "image": "ipfs://placeholder/kudos-0.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Kudos Magnet 5', symbolizing Received 5 kudos from peers. Designed with matte gray glow and layered with brushed steel elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "2ce3511a-8635-48b9-aaf3-d869cf1b95b7",
+    "slug": "kudos-1",
+    "name": "Kudos Magnet 10",
+    "tier": "\ud83d\udd35 Uncommon",
+    "description": "Received 10 kudos from peers.",
+    "image": "ipfs://placeholder/kudos-1.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Kudos Magnet 10', symbolizing Received 10 kudos from peers. Designed with luminous blue glow and layered with tempered glass elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "a50a1b2b-bc2f-49aa-8d82-37ace03a434f",
+    "slug": "kudos-2",
+    "name": "Kudos Magnet 25",
+    "tier": "\ud83d\udfe3 Rare",
+    "description": "Received 25 kudos from peers.",
+    "image": "ipfs://placeholder/kudos-2.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Kudos Magnet 25', symbolizing Received 25 kudos from peers. Designed with radiant violet glow and layered with mystic crystal elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "db395e45-6e5c-43f0-b5ca-c1fc420a44a9",
+    "slug": "kudos-3",
+    "name": "Kudos Magnet 50",
+    "tier": "\ud83d\udfe1 Epic",
+    "description": "Received 50 kudos from peers.",
+    "image": "ipfs://placeholder/kudos-3.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Kudos Magnet 50', symbolizing Received 50 kudos from peers. Designed with glowing gold glow and layered with enchanted runes elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "af2b7f73-f53d-4d4d-b571-3d9410768016",
+    "slug": "kudos-4",
+    "name": "Kudos Magnet 100",
+    "tier": "\ud83d\udd34 Legendary",
+    "description": "Received 100 kudos from peers.",
+    "image": "ipfs://placeholder/kudos-4.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Kudos Magnet 100', symbolizing Received 100 kudos from peers. Designed with molten red-orange glow and layered with mythic flame fractals elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "28b6ce24-aeb7-4a70-996b-b7fc42d3f632",
+    "slug": "kudos-5",
+    "name": "Kudos Magnet 200",
+    "tier": "\u2728 God Tier",
+    "description": "Received 200 kudos from peers.",
+    "image": "ipfs://placeholder/kudos-5.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Kudos Magnet 200', symbolizing Received 200 kudos from peers. Designed with divine white-gold glow and layered with celestial stardust and cosmic halo elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "9f57ccd8-ec54-4345-92f8-35095d17bce0",
+    "slug": "shares-0",
+    "name": "Market Voice 5",
+    "tier": "\ud83d\udfe2 Common",
+    "description": "Shared content 5 times.",
+    "image": "ipfs://placeholder/shares-0.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Market Voice 5', symbolizing Shared content 5 times. Designed with matte gray glow and layered with brushed steel elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "6b618424-c2ee-4086-85e9-21f9f87f06c0",
+    "slug": "shares-1",
+    "name": "Market Voice 20",
+    "tier": "\ud83d\udd35 Uncommon",
+    "description": "Shared content 20 times.",
+    "image": "ipfs://placeholder/shares-1.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Market Voice 20', symbolizing Shared content 20 times. Designed with luminous blue glow and layered with tempered glass elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "c75e228c-807e-49af-81d5-a26d1b92ea71",
+    "slug": "shares-2",
+    "name": "Market Voice 50",
+    "tier": "\ud83d\udfe3 Rare",
+    "description": "Shared content 50 times.",
+    "image": "ipfs://placeholder/shares-2.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Market Voice 50', symbolizing Shared content 50 times. Designed with radiant violet glow and layered with mystic crystal elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "718447cb-2fe3-4fec-b7cd-b5af178d19a1",
+    "slug": "shares-3",
+    "name": "Market Voice 100",
+    "tier": "\ud83d\udfe1 Epic",
+    "description": "Shared content 100 times.",
+    "image": "ipfs://placeholder/shares-3.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Market Voice 100', symbolizing Shared content 100 times. Designed with glowing gold glow and layered with enchanted runes elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "9ad4f8a2-e7ff-438b-803e-d4adbfe56871",
+    "slug": "shares-4",
+    "name": "Market Voice 250",
+    "tier": "\ud83d\udd34 Legendary",
+    "description": "Shared content 250 times.",
+    "image": "ipfs://placeholder/shares-4.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Market Voice 250', symbolizing Shared content 250 times. Designed with molten red-orange glow and layered with mythic flame fractals elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "da9ee7a9-e5c5-49ac-a891-2ce3cd685d23",
+    "slug": "shares-5",
+    "name": "Market Voice 500",
+    "tier": "\u2728 God Tier",
+    "description": "Shared content 500 times.",
+    "image": "ipfs://placeholder/shares-5.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Market Voice 500', symbolizing Shared content 500 times. Designed with divine white-gold glow and layered with celestial stardust and cosmic halo elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "8f761bd3-5405-49cb-8eb9-44f6652e2f88",
+    "slug": "stars-0",
+    "name": "Community Rated 10",
+    "tier": "\ud83d\udfe2 Common",
+    "description": "Earned 10 stars across posts and SNFTs.",
+    "image": "ipfs://placeholder/stars-0.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Community Rated 10', symbolizing Earned 10 stars across posts and SNFTs. Designed with matte gray glow and layered with brushed steel elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "cfe89b55-0f80-4c9f-907b-53463aaace0b",
+    "slug": "stars-1",
+    "name": "Community Rated 25",
+    "tier": "\ud83d\udd35 Uncommon",
+    "description": "Earned 25 stars across posts and SNFTs.",
+    "image": "ipfs://placeholder/stars-1.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Community Rated 25', symbolizing Earned 25 stars across posts and SNFTs. Designed with luminous blue glow and layered with tempered glass elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "222fe32f-2d79-4bd2-b6f9-1fba3fdb5a23",
+    "slug": "stars-2",
+    "name": "Community Rated 50",
+    "tier": "\ud83d\udfe3 Rare",
+    "description": "Earned 50 stars across posts and SNFTs.",
+    "image": "ipfs://placeholder/stars-2.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Community Rated 50', symbolizing Earned 50 stars across posts and SNFTs. Designed with radiant violet glow and layered with mystic crystal elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "2b591a08-ccb9-4d1b-ab24-66dbe23e4de6",
+    "slug": "stars-3",
+    "name": "Community Rated 100",
+    "tier": "\ud83d\udfe1 Epic",
+    "description": "Earned 100 stars across posts and SNFTs.",
+    "image": "ipfs://placeholder/stars-3.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Community Rated 100', symbolizing Earned 100 stars across posts and SNFTs. Designed with glowing gold glow and layered with enchanted runes elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "cc535fb4-3900-459b-9464-9fd58fb3865d",
+    "slug": "stars-4",
+    "name": "Community Rated 200",
+    "tier": "\ud83d\udd34 Legendary",
+    "description": "Earned 200 stars across posts and SNFTs.",
+    "image": "ipfs://placeholder/stars-4.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Community Rated 200', symbolizing Earned 200 stars across posts and SNFTs. Designed with molten red-orange glow and layered with mythic flame fractals elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "f5deccb9-e82c-4ea3-9be3-413eb89f3ab5",
+    "slug": "stars-5",
+    "name": "Community Rated 500",
+    "tier": "\u2728 God Tier",
+    "description": "Earned 500 stars across posts and SNFTs.",
+    "image": "ipfs://placeholder/stars-5.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Community Rated 500', symbolizing Earned 500 stars across posts and SNFTs. Designed with divine white-gold glow and layered with celestial stardust and cosmic halo elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "27cec772-4ca7-477d-8443-1e130f076841",
+    "slug": "favorites-0",
+    "name": "Fan Favorite 10",
+    "tier": "\ud83d\udfe2 Common",
+    "description": "Your SNFTs were favorited 10 times.",
+    "image": "ipfs://placeholder/favorites-0.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Fan Favorite 10', symbolizing Your SNFTs were favorited 10 times. Designed with matte gray glow and layered with brushed steel elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "de02c56e-9031-433d-9293-20b86e05e0d3",
+    "slug": "favorites-1",
+    "name": "Fan Favorite 30",
+    "tier": "\ud83d\udd35 Uncommon",
+    "description": "Your SNFTs were favorited 30 times.",
+    "image": "ipfs://placeholder/favorites-1.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Fan Favorite 30', symbolizing Your SNFTs were favorited 30 times. Designed with luminous blue glow and layered with tempered glass elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "4f01dc67-3a7c-48f3-97b5-8c479c941bde",
+    "slug": "favorites-2",
+    "name": "Fan Favorite 75",
+    "tier": "\ud83d\udfe3 Rare",
+    "description": "Your SNFTs were favorited 75 times.",
+    "image": "ipfs://placeholder/favorites-2.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Fan Favorite 75', symbolizing Your SNFTs were favorited 75 times. Designed with radiant violet glow and layered with mystic crystal elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "76ad7553-6811-4ebc-b723-fd50738b8f4e",
+    "slug": "favorites-3",
+    "name": "Fan Favorite 150",
+    "tier": "\ud83d\udfe1 Epic",
+    "description": "Your SNFTs were favorited 150 times.",
+    "image": "ipfs://placeholder/favorites-3.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Fan Favorite 150', symbolizing Your SNFTs were favorited 150 times. Designed with glowing gold glow and layered with enchanted runes elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "4efa90c5-5f54-4fbf-ab17-59791dcdd5a7",
+    "slug": "favorites-4",
+    "name": "Fan Favorite 300",
+    "tier": "\ud83d\udd34 Legendary",
+    "description": "Your SNFTs were favorited 300 times.",
+    "image": "ipfs://placeholder/favorites-4.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Fan Favorite 300', symbolizing Your SNFTs were favorited 300 times. Designed with molten red-orange glow and layered with mythic flame fractals elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "ac529012-b779-44a6-94f4-8074366d5a32",
+    "slug": "favorites-5",
+    "name": "Fan Favorite 500",
+    "tier": "\u2728 God Tier",
+    "description": "Your SNFTs were favorited 500 times.",
+    "image": "ipfs://placeholder/favorites-5.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Fan Favorite 500', symbolizing Your SNFTs were favorited 500 times. Designed with divine white-gold glow and layered with celestial stardust and cosmic halo elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "b4ce25f4-4f64-42ef-b349-3f144d7373a0",
+    "slug": "mentions-0",
+    "name": "Mentioned 5",
+    "tier": "\ud83d\udfe2 Common",
+    "description": "Mentioned by others 5 times.",
+    "image": "ipfs://placeholder/mentions-0.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Mentioned 5', symbolizing Mentioned by others 5 times. Designed with matte gray glow and layered with brushed steel elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "cf7c7b73-f3c3-4bfb-b7ac-7cb46798c994",
+    "slug": "mentions-1",
+    "name": "Mentioned 15",
+    "tier": "\ud83d\udd35 Uncommon",
+    "description": "Mentioned by others 15 times.",
+    "image": "ipfs://placeholder/mentions-1.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Mentioned 15', symbolizing Mentioned by others 15 times. Designed with luminous blue glow and layered with tempered glass elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "538c18a6-ddcf-47bd-a84f-33ee67a6ec03",
+    "slug": "mentions-2",
+    "name": "Mentioned 30",
+    "tier": "\ud83d\udfe3 Rare",
+    "description": "Mentioned by others 30 times.",
+    "image": "ipfs://placeholder/mentions-2.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Mentioned 30', symbolizing Mentioned by others 30 times. Designed with radiant violet glow and layered with mystic crystal elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "0e3704ba-87ea-4bb4-b165-8c6a55ee4caa",
+    "slug": "mentions-3",
+    "name": "Mentioned 60",
+    "tier": "\ud83d\udfe1 Epic",
+    "description": "Mentioned by others 60 times.",
+    "image": "ipfs://placeholder/mentions-3.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Mentioned 60', symbolizing Mentioned by others 60 times. Designed with glowing gold glow and layered with enchanted runes elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "2ff5ac29-e6ab-4e56-bade-8716a9888505",
+    "slug": "mentions-4",
+    "name": "Mentioned 100",
+    "tier": "\ud83d\udd34 Legendary",
+    "description": "Mentioned by others 100 times.",
+    "image": "ipfs://placeholder/mentions-4.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Mentioned 100', symbolizing Mentioned by others 100 times. Designed with molten red-orange glow and layered with mythic flame fractals elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "043285eb-55a3-4d2b-b538-beba6e5b9c61",
+    "slug": "mentions-5",
+    "name": "Mentioned 250",
+    "tier": "\u2728 God Tier",
+    "description": "Mentioned by others 250 times.",
+    "image": "ipfs://placeholder/mentions-5.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Mentioned 250', symbolizing Mentioned by others 250 times. Designed with divine white-gold glow and layered with celestial stardust and cosmic halo elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "54e83b55-9d32-408d-9837-e047bdcf8afb",
+    "slug": "streaks-0",
+    "name": "Streak Keeper 3",
+    "tier": "\ud83d\udfe2 Common",
+    "description": "Maintained a 3-day activity streak.",
+    "image": "ipfs://placeholder/streaks-0.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Streak Keeper 3', symbolizing Maintained a 3-day activity streak. Designed with matte gray glow and layered with brushed steel elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "4c06bc58-a375-4eb2-b9b4-843ac61f1119",
+    "slug": "streaks-1",
+    "name": "Streak Keeper 7",
+    "tier": "\ud83d\udd35 Uncommon",
+    "description": "Maintained a 7-day activity streak.",
+    "image": "ipfs://placeholder/streaks-1.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Streak Keeper 7', symbolizing Maintained a 7-day activity streak. Designed with luminous blue glow and layered with tempered glass elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "fec9d270-706c-4a62-8ed8-f939867f33d7",
+    "slug": "streaks-2",
+    "name": "Streak Keeper 14",
+    "tier": "\ud83d\udfe3 Rare",
+    "description": "Maintained a 14-day activity streak.",
+    "image": "ipfs://placeholder/streaks-2.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Streak Keeper 14', symbolizing Maintained a 14-day activity streak. Designed with radiant violet glow and layered with mystic crystal elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "91bf05de-dd08-4a1c-8571-1898f4930943",
+    "slug": "streaks-3",
+    "name": "Streak Keeper 30",
+    "tier": "\ud83d\udfe1 Epic",
+    "description": "Maintained a 30-day activity streak.",
+    "image": "ipfs://placeholder/streaks-3.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Streak Keeper 30', symbolizing Maintained a 30-day activity streak. Designed with glowing gold glow and layered with enchanted runes elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "db37dd7b-3838-4ba1-ae19-e02d0fb6fd31",
+    "slug": "streaks-4",
+    "name": "Streak Keeper 60",
+    "tier": "\ud83d\udd34 Legendary",
+    "description": "Maintained a 60-day activity streak.",
+    "image": "ipfs://placeholder/streaks-4.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Streak Keeper 60', symbolizing Maintained a 60-day activity streak. Designed with molten red-orange glow and layered with mythic flame fractals elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "5dc4f6fb-79b3-4f46-927a-28b44af7a84d",
+    "slug": "streaks-5",
+    "name": "Streak Keeper 100",
+    "tier": "\u2728 God Tier",
+    "description": "Maintained a 100-day activity streak.",
+    "image": "ipfs://placeholder/streaks-5.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Streak Keeper 100', symbolizing Maintained a 100-day activity streak. Designed with divine white-gold glow and layered with celestial stardust and cosmic halo elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "20e1ef6d-d1f7-42ab-861c-8dfea6ad74c4",
+    "slug": "reputation-0",
+    "name": "Reputation Rank C",
+    "tier": "\ud83d\udfe2 Common",
+    "description": "Achieved rank: C.",
+    "image": "ipfs://placeholder/reputation-0.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Reputation Rank C', symbolizing Achieved rank: C. Designed with matte gray glow and layered with brushed steel elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "cd6f2286-2c18-42eb-850f-306e23e14478",
+    "slug": "reputation-1",
+    "name": "Reputation Rank B",
+    "tier": "\ud83d\udd35 Uncommon",
+    "description": "Achieved rank: B.",
+    "image": "ipfs://placeholder/reputation-1.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Reputation Rank B', symbolizing Achieved rank: B. Designed with luminous blue glow and layered with tempered glass elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "a4242016-ec83-4712-8e6e-2caf17213e95",
+    "slug": "reputation-2",
+    "name": "Reputation Rank A",
+    "tier": "\ud83d\udfe3 Rare",
+    "description": "Achieved rank: A.",
+    "image": "ipfs://placeholder/reputation-2.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Reputation Rank A', symbolizing Achieved rank: A. Designed with radiant violet glow and layered with mystic crystal elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "4b3d03e8-f5be-44a7-ac6e-171880c7cbbd",
+    "slug": "reputation-3",
+    "name": "Reputation Rank S",
+    "tier": "\ud83d\udfe1 Epic",
+    "description": "Achieved rank: S.",
+    "image": "ipfs://placeholder/reputation-3.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Reputation Rank S', symbolizing Achieved rank: S. Designed with glowing gold glow and layered with enchanted runes elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "130f036c-243d-4f88-adb0-cd072bb195c6",
+    "slug": "reputation-4",
+    "name": "Reputation Rank SS",
+    "tier": "\ud83d\udd34 Legendary",
+    "description": "Achieved rank: SS.",
+    "image": "ipfs://placeholder/reputation-4.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Reputation Rank SS', symbolizing Achieved rank: SS. Designed with molten red-orange glow and layered with mythic flame fractals elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "b348a9d3-6a72-44ab-ba95-c7572f1e3829",
+    "slug": "reputation-5",
+    "name": "Reputation Rank SSS",
+    "tier": "\u2728 God Tier",
+    "description": "Achieved rank: SSS.",
+    "image": "ipfs://placeholder/reputation-5.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Reputation Rank SSS', symbolizing Achieved rank: SSS. Designed with divine white-gold glow and layered with celestial stardust and cosmic halo elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "daae63cd-9c38-4afa-bc96-3d4a0368148a",
+    "slug": "divine-0",
+    "name": "Genesis Luminary",
+    "tier": "\u2728 God Tier",
+    "description": "Founding contributor of the Bridges Market protocol.",
+    "image": "ipfs://placeholder/divine-0.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Genesis Luminary', symbolizing Founding contributor of the Bridges Market protocol. Designed with divine white-gold glow and layered with celestial stardust and cosmic halo elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "4212e570-382c-4991-90c8-5faa19b74e2c",
+    "slug": "divine-1",
+    "name": "Architect of Trust",
+    "tier": "\u2728 God Tier",
+    "description": "Designed a SNFT that generated 100% ROI.",
+    "image": "ipfs://placeholder/divine-1.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Architect of Trust', symbolizing Designed a SNFT that generated 100% ROI. Designed with divine white-gold glow and layered with celestial stardust and cosmic halo elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "53c582c8-2702-45c1-8099-379649f02fee",
+    "slug": "divine-2",
+    "name": "Legendary Guardian",
+    "tier": "\u2728 God Tier",
+    "description": "Maintained Top 1% reputation rank for 365 days.",
+    "image": "ipfs://placeholder/divine-2.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Legendary Guardian', symbolizing Maintained Top 1% reputation rank for 365 days. Designed with divine white-gold glow and layered with celestial stardust and cosmic halo elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "59c381fb-c4ce-4718-8eb2-635d8357849c",
+    "slug": "divine-3",
+    "name": "Eternal Mentor",
+    "tier": "\u2728 God Tier",
+    "description": "Earned 1000 Kudos across the platform.",
+    "image": "ipfs://placeholder/divine-3.png",
+    "generation_prompt": "An intricate digital badge icon representing 'Eternal Mentor', symbolizing Earned 1000 Kudos across the platform. Designed with divine white-gold glow and layered with celestial stardust and cosmic halo elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  },
+  {
+    "id": "acf02ff3-fa97-4d6e-a594-3697f48f717e",
+    "slug": "divine-4",
+    "name": "MetaDAO Summoner",
+    "tier": "\u2728 God Tier",
+    "description": "Founded a DAO that reached SSS rank and 10K followers.",
+    "image": "ipfs://placeholder/divine-4.png",
+    "generation_prompt": "An intricate digital badge icon representing 'MetaDAO Summoner', symbolizing Founded a DAO that reached SSS rank and 10K followers. Designed with divine white-gold glow and layered with celestial stardust and cosmic halo elements. Emblem style, clean vector art, futuristic with prestige fantasy tones, centered composition, transparent background."
+  }
+]

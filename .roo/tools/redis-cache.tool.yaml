@@ -1,0 +1,2 @@
+name: redis-cache
+description: In-memory caching layer for performance and live data feeds.

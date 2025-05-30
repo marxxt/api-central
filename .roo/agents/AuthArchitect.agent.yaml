@@ -1,0 +1,4 @@
+name: AuthArchitect
+role: Handles Supabase JWT integration and permission logic.
+tools:
+  - supabase-client

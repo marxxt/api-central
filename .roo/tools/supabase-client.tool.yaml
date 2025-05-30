@@ -1,0 +1,2 @@
+name: supabase-client
+description: Client to authenticate and query Supabase services.

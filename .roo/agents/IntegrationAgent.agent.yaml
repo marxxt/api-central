@@ -1,0 +1,5 @@
+name: IntegrationAgent
+role: Connects microservices and builds the resolver logic for live data queries.
+tools:
+  - graphql-router
+  - redis-cache

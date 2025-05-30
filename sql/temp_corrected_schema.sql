@@ -4,6 +4,15 @@
 -- Ensure you are connected to your Supabase database.
 -- These commands are typically run via the Supabase UI SQL Editor or migrations.
 
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'rank') THEN
+    CREATE TYPE rank AS ENUM ('SSS', 'SS', 'S', 'A', 'B', 'C', 'D', 'F');
+  END IF;
+END$$;
+
+
+
 ---------------------------------------------------------------------------------
 -- Function to set updated_at timestamp (must be created before any triggers use it)
 ---------------------------------------------------------------------------------
@@ -57,29 +66,65 @@ DROP TABLE IF EXISTS public.reputations CASCADE;
 
 CREATE TABLE public.reputations (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+
+    subject_type text NOT NULL CHECK (subject_type IN ('user', 'dao')),
+    subject_id uuid NOT NULL, -- FK to auth.users or daos (informational; not enforced here)
+
     score numeric,
-    rank text,
+    rank rank,
     ranking_percentile text,
-    last_updated timestamp with time zone,
+    last_updated timestamptz DEFAULT now(),
+
     adjusted_staking_yield text,
     forecast_access_level text,
-    created_at timestamp with time zone DEFAULT now() NOT NULL,
-    updated_at timestamp with time zone
+
+    created_at timestamptz DEFAULT now() NOT NULL,
+    updated_at timestamptz
 );
 
-CREATE INDEX idx_reputations_user_id ON public.reputations (user_id);
+CREATE UNIQUE INDEX idx_reputations_subject ON public.reputations(subject_type, subject_id);
 
+-- Enable Row Level Security
 ALTER TABLE public.reputations ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Users can view their own reputations" ON public.reputations
-    FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can create their own reputations" ON public.reputations
-    FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Users can update their own reputations" ON public.reputations
-    FOR UPDATE USING (auth.uid() = user_id);
-CREATE POLICY "Users can delete their own reputations" ON public.reputations
-    FOR DELETE USING (auth.uid() = user_id);
+-- Policy: Users can view their own reputations
+CREATE POLICY "Users can view their own reputations"
+ON public.reputations
+FOR SELECT
+TO authenticated
+USING (
+  subject_type = 'user' AND subject_id = auth.uid()
+);
+
+-- Policy: Users can create their own reputations
+CREATE POLICY "Users can create their own reputations"
+ON public.reputations
+FOR INSERT
+TO authenticated
+WITH CHECK (
+  subject_type = 'user' AND subject_id = auth.uid()
+);
+
+-- Policy: Users can update their own reputations
+CREATE POLICY "Users can update their own reputations"
+ON public.reputations
+FOR UPDATE
+TO authenticated
+USING (
+  subject_type = 'user' AND subject_id = auth.uid()
+)
+WITH CHECK (
+  subject_type = 'user' AND subject_id = auth.uid()
+);
+
+-- Policy: Users can delete their own reputations
+CREATE POLICY "Users can delete their own reputations"
+ON public.reputations
+FOR DELETE
+TO authenticated
+USING (
+  subject_type = 'user' AND subject_id = auth.uid()
+);
 
 CREATE TRIGGER set_reputations_timestamp
     BEFORE UPDATE ON public.reputations
@@ -500,7 +545,7 @@ CREATE TABLE public.bid_history (
     bidder uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
     amount numeric NOT NULL,
     time timestamp with time zone DEFAULT now() NOT NULL,
-    timestamp bigint NOT NULL, -- Consider renaming to epoch_timestamp for clarity
+    epoch_timestamp bigint NOT NULL, -- Consider renaming to epoch_timestamp for clarity
 
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone
@@ -629,13 +674,28 @@ CREATE TRIGGER set_dao_votes_timestamp
 ---------------------------------------------------------------------------------
 DROP TABLE IF EXISTS public.user_stats CASCADE;
 
+DROP TABLE IF EXISTS public.user_stats CASCADE;
+
 CREATE TABLE public.user_stats (
     user_id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+
+    -- Core metrics
     snft_count integer DEFAULT 0,
     trade_count integer DEFAULT 0,
     wallet_count integer DEFAULT 0,
-    last_updated timestamp with time zone DEFAULT now()
+
+    -- Social metrics
+    comment_count integer DEFAULT 0,
+    reply_count integer DEFAULT 0,
+    share_count integer DEFAULT 0,
+    favorite_count integer DEFAULT 0,
+    star_count integer DEFAULT 0, -- how many users/DAOs this user has rated
+    received_star_count integer DEFAULT 0, -- how many stars the user has received
+    average_rating numeric, -- optional running avg of stars received
+
+    last_updated timestamptz DEFAULT now()
 );
+
 
 -- Function to update SNFT count
 CREATE OR REPLACE FUNCTION public.increment_snft_count()
@@ -745,6 +805,92 @@ CREATE TABLE public.property_token_transfers (
 ALTER TABLE public.snfts
 ADD COLUMN contract_address text UNIQUE NOT NULL;
 
+-- Create main Contractor table 
+DROP TABLE IF EXISTS public.contractors CASCADE;
+
+CREATE TABLE public.contractors (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    dao_id UUID REFERENCES public.daos(id) ON DELETE SET NULL, -- DAO that governs this contractor
+
+    company TEXT NOT NULL,
+    contact TEXT,
+    link TEXT,
+    type TEXT CHECK (type IN (
+        'builder', 'architect', 'plumber', 'electrician', 'landscaper', 'general_contractor', 
+        'interior_designer', 'inspector', 'lawyer', 'engineer', 'broker', 'developer', 'accountant', 'property_manager', 'other'
+    )) NOT NULL,
+
+    ,
+    other_type TEXT NULL,
+
+    created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT now() NOT NULL
+);
+
+-- Create main DAOs table
+DROP TABLE IF EXISTS public.daos CASCADE;
+
+CREATE TABLE public.daos (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT NOT NULL,
+    link TEXT,
+    description TEXT,
+    snft_id UUID REFERENCES public.snfts(id) ON DELETE SET NULL,
+
+    dao_type TEXT CHECK (dao_type IN (
+        'single_property',
+        'multi_property',
+        'contractor',
+        'hedge_fund',
+        'realtor_team',
+        'reit',
+        'developer',
+        'community',
+        'guild',
+        'foundation',
+        'investor_club'
+    )) DEFAULT 'community',
+
+    operational_scope TEXT CHECK (operational_scope IN (
+        'local',
+        'regional',
+        'national',
+        'global'
+    )) DEFAULT 'local',
+
+    valuation NUMERIC,  -- Total DAO valuation in USD
+    currency TEXT DEFAULT 'USD',
+    total_token_supply NUMERIC,
+    treasury_address TEXT,
+    voting_token_address TEXT,
+    governance_model TEXT, -- '1-token-1-vote', 'quadratic', etc.
+
+    created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT now() NOT NULL
+);
+
+-- Junction table for DAO members
+CREATE TABLE public.dao_members (
+    dao_id UUID REFERENCES public.daos(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    PRIMARY KEY (dao_id, user_id)
+);
+
+-- Junction table for DAO managers
+CREATE TABLE public.dao_managers (
+    dao_id UUID REFERENCES public.daos(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    PRIMARY KEY (dao_id, user_id)
+);
+
+-- Junction table for DAO contractors
+CREATE TABLE public.dao_contractors (
+    dao_id UUID REFERENCES public.daos(id) ON DELETE CASCADE,
+    contractor_id UUID REFERENCES public.contractors(id) ON DELETE CASCADE,
+    PRIMARY KEY (dao_id, contractor_id)
+);
+
+
 ALTER TABLE public.snfts
 ADD COLUMN dao_id uuid REFERENCES public.daos(id) ON DELETE SET NULL,
 ADD COLUMN trust_id uuid; -- Optional if tracked off-chain or abstracted
@@ -783,9 +929,6 @@ CREATE TABLE public.snft_mint_events (
     status text CHECK (status IN ('confirmed', 'pending', 'failed')) DEFAULT 'confirmed'
 );
 
-ALTER TABLE public.snfts
-ADD COLUMN metadata_uri text,        -- e.g., ipfs://QmXoY...z5v
-ADD COLUMN metadata_hash text;       -- Store just the CID or SHA256 hash of metadata
 
 ALTER TABLE public.snfts
 ADD COLUMN status text DEFAULT 'draft' CHECK (
@@ -816,8 +959,8 @@ CREATE TABLE IF NOT EXISTS public.snft_events (
     created_at timestamp with time zone DEFAULT now()
 );
 
-CREATE INDEX IF NOT EXISTS public.idx_snft_events_snft_id ON public.snft_events (snft_id);
-CREATE INDEX IF NOT EXISTS public.idx_snft_events_event_type ON public.snft_events (event_type);
+CREATE INDEX public.idx_snft_events_snft_id ON public.snft_events (snft_id);
+CREATE INDEX public.idx_snft_events_event_type ON public.snft_events (event_type);
 
 -- 2. CALLBACK-BASED CONTRACT SYNC
 -- Triggered manually or from deployment scripts
@@ -840,7 +983,7 @@ ALTER TABLE public.snfts
 -- Optional: Mark expired drafts with a scheduled CRON or background job
 UPDATE public.snfts SET status = 'expired' WHERE status = 'draft' AND expires_at < now();
 
-DROP TABLE IF EXISTS public.snft_events CASCADE;
+DROP TABLE IF EXISTS public.snft_metadata_retry_queue CASCADE;
 
 CREATE TABLE public.snft_metadata_retry_queue (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -851,19 +994,19 @@ CREATE TABLE public.snft_metadata_retry_queue (
   error_log text
 );
 
-CREATE OR REPLACE FUNCTION public.handle_snft_insert()
-RETURNS TRIGGER AS $$
-BEGIN
-  IF NEW.status = 'notarized' THEN
-    PERFORM net.http_post(
-      url := 'https://your-edge-fn-url',
-      headers := jsonb_build_object('Content-Type', 'application/json'),
-      body := jsonb_build_object('snft_id', NEW.id)
-    );
-  END IF;
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+-- CREATE OR REPLACE FUNCTION public.handle_snft_insert()
+-- RETURNS TRIGGER AS $$
+-- BEGIN
+--   IF NEW.status = 'notarized' THEN
+--     PERFORM net.http_post(
+--       url := 'https://your-edge-fn-url',
+--       headers := jsonb_build_object('Content-Type', 'application/json'),
+--       body := jsonb_build_object('snft_id', NEW.id)
+--     );
+--   END IF;
+--   RETURN NEW;
+-- END;
+-- $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER trg_snft_insert_metadata_trigger
 AFTER INSERT ON public.snfts
@@ -921,5 +1064,448 @@ WHERE metadata_status = 'complete'
   AND metadata_uri IS NOT NULL
   AND status = 'ready_for_contract';
 
-SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-const web3 = new Web3Storage({ token: Deno.env.get("WEB3_STORAGE_TOKEN")! });
+DROP TABLE IF EXISTS public.favorites CASCADE;
+
+CREATE TABLE public.favorites (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
+    asset_type text NOT NULL CHECK (asset_type IN (
+        'snft', 'post', 'user', 'property', 'bot_strategy', 'chat_message'
+    )),
+    asset_id text NOT NULL,
+    favorited_at timestamptz DEFAULT now(),
+
+    UNIQUE (user_id, asset_type, asset_id)
+);
+
+CREATE INDEX idx_favorites_user_id ON public.favorites(user_id);
+CREATE INDEX idx_favorites_asset ON public.favorites(asset_type, asset_id);
+
+ALTER TABLE public.favorites ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view their own favorites" ON public.favorites
+    FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can favorite assets" ON public.favorites
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can unfavorite assets" ON public.favorites
+    FOR DELETE USING (auth.uid() = user_id);
+
+CREATE TRIGGER set_favorites_timestamp
+    BEFORE UPDATE ON public.favorites
+    FOR EACH ROW
+    EXECUTE FUNCTION public.set_update_timestamp();
+
+
+DROP TABLE IF EXISTS public.favorites CASCADE;
+
+CREATE TABLE public.favorites (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
+    asset_type text NOT NULL CHECK (asset_type IN (
+        'snft', 'post', 'user', 'property', 'bot_strategy', 'chat_message'
+    )),
+    asset_id text NOT NULL,
+    favorited_at timestamptz DEFAULT now(),
+
+    UNIQUE (user_id, asset_type, asset_id)
+);
+
+CREATE INDEX idx_favorites_user_id ON public.favorites(user_id);
+CREATE INDEX idx_favorites_asset ON public.favorites(asset_type, asset_id);
+
+ALTER TABLE public.favorites ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view their own favorites" ON public.favorites
+    FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can favorite assets" ON public.favorites
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can unfavorite assets" ON public.favorites
+    FOR DELETE USING (auth.uid() = user_id);
+
+CREATE TRIGGER set_favorites_timestamp
+    BEFORE UPDATE ON public.favorites
+    FOR EACH ROW
+    EXECUTE FUNCTION public.set_update_timestamp();
+
+DROP TABLE IF EXISTS public.stars CASCADE;
+
+CREATE TABLE public.stars (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+    entity_type text NOT NULL CHECK (entity_type IN ('user', 'dao', 'snft')),
+    entity_id uuid NOT NULL,
+    value integer NOT NULL CHECK (value BETWEEN 1 AND 5),
+    review text, -- Optional text review
+    created_at timestamptz DEFAULT now(),
+    updated_at timestamptz
+);
+
+CREATE UNIQUE INDEX idx_stars_unique ON public.stars(user_id, entity_type, entity_id);
+CREATE INDEX idx_stars_entity ON public.stars(entity_type, entity_id);
+
+ALTER TABLE public.stars ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view their own ratings" ON public.stars
+    FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can leave reviews" ON public.stars
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can update their review" ON public.stars
+    FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Users can delete their review" ON public.stars
+    FOR DELETE USING (auth.uid() = user_id);
+
+CREATE TRIGGER set_stars_timestamp
+    BEFORE UPDATE ON public.stars
+    FOR EACH ROW
+    EXECUTE FUNCTION public.set_update_timestamp();
+
+CREATE MATERIALIZED VIEW reputation_summary AS
+SELECT
+    entity_type,
+    entity_id,
+    COUNT(*) AS total_reviews,
+    AVG(value) AS average_rating,
+    PERCENT_RANK() OVER (PARTITION BY entity_type ORDER BY AVG(value)) AS percentile
+FROM public.stars
+GROUP BY entity_type, entity_id;
+
+DROP TABLE IF EXISTS public.comments CASCADE;
+
+CREATE TABLE public.comments (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+    asset_type text NOT NULL CHECK (asset_type IN ('snft', 'post', 'property', 'bot_strategy', 'chat_message')),
+    asset_id text NOT NULL,
+    parent_id uuid REFERENCES public.comments(id) ON DELETE CASCADE, -- for replies
+    content text NOT NULL,
+    is_edited boolean DEFAULT FALSE,
+    created_at timestamptz DEFAULT now(),
+    updated_at timestamptz
+);
+
+CREATE INDEX idx_comments_asset ON public.comments(asset_type, asset_id);
+CREATE INDEX idx_comments_parent_id ON public.comments(parent_id);
+
+ALTER TABLE public.comments ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view comments" ON public.comments
+    FOR SELECT USING (TRUE);  -- or restrict to asset visibility
+CREATE POLICY "Users can comment" ON public.comments
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can edit own comments" ON public.comments
+    FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Users can delete own comments" ON public.comments
+    FOR DELETE USING (auth.uid() = user_id);
+
+CREATE TRIGGER set_comments_timestamp
+    BEFORE UPDATE ON public.comments
+    FOR EACH ROW
+    EXECUTE FUNCTION public.set_update_timestamp();
+
+DROP TABLE IF EXISTS public.shares CASCADE;
+
+CREATE TABLE public.shares (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+    asset_type text NOT NULL CHECK (asset_type IN ('snft', 'post', 'property', 'bot_strategy')),
+    asset_id text NOT NULL,
+    shared_with text, -- 'public', 'followers', or a specific DAO ID or user ID
+    comment text, -- optional caption or note
+    shared_at timestamptz DEFAULT now()
+);
+
+CREATE INDEX idx_shares_asset ON public.shares(asset_type, asset_id);
+CREATE INDEX idx_shares_user_id ON public.shares(user_id);
+
+ALTER TABLE public.shares ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view shared assets" ON public.shares
+    FOR SELECT USING (TRUE); -- or conditionally based on shared_with
+CREATE POLICY "Users can share assets" ON public.shares
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE OR REPLACE FUNCTION public.increment_comment_counts()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.parent_id IS NULL THEN
+    -- It's a top-level comment
+    INSERT INTO public.user_stats (user_id, comment_count)
+    VALUES (NEW.user_id, 1)
+    ON CONFLICT (user_id)
+    DO UPDATE SET comment_count = user_stats.comment_count + 1,
+                  last_updated = now();
+  ELSE
+    -- It's a reply
+    INSERT INTO public.user_stats (user_id, reply_count)
+    VALUES (NEW.user_id, 1)
+    ON CONFLICT (user_id)
+    DO UPDATE SET reply_count = user_stats.reply_count + 1,
+                  last_updated = now();
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_increment_comment_count
+AFTER INSERT ON public.comments
+FOR EACH ROW
+EXECUTE FUNCTION public.increment_comment_counts();
+
+CREATE OR REPLACE FUNCTION public.increment_share_count()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.user_stats (user_id, share_count)
+  VALUES (NEW.user_id, 1)
+  ON CONFLICT (user_id)
+  DO UPDATE SET share_count = user_stats.share_count + 1,
+                last_updated = now();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_increment_share_count
+AFTER INSERT ON public.shares
+FOR EACH ROW
+EXECUTE FUNCTION public.increment_share_count();
+
+ALTER TABLE public.user_stats
+ADD COLUMN last_active timestamptz DEFAULT now();
+
+CREATE OR REPLACE FUNCTION public.touch_user_last_active()
+RETURNS TRIGGER AS $$
+BEGIN
+  UPDATE public.user_stats
+  SET last_active = now(),
+      last_updated = now()
+  WHERE user_id = NEW.user_id;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_touch_last_active_on_comment
+AFTER INSERT ON public.comments
+FOR EACH ROW
+EXECUTE FUNCTION public.touch_user_last_active();
+
+CREATE TRIGGER trg_touch_last_active_on_trade
+AFTER INSERT ON public.trades
+FOR EACH ROW
+EXECUTE FUNCTION public.touch_user_last_active();
+
+CREATE TRIGGER trg_touch_last_active_on_share
+AFTER INSERT ON public.shares
+FOR EACH ROW
+EXECUTE FUNCTION public.touch_user_last_active();
+
+DROP TABLE IF EXISTS public.daily_rollup_user_stats CASCADE;
+
+CREATE TABLE public.daily_rollup_user_stats (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
+    date date NOT NULL,
+    
+    snft_count integer DEFAULT 0,
+    trade_count integer DEFAULT 0,
+    wallet_count integer DEFAULT 0,
+    comment_count integer DEFAULT 0,
+    reply_count integer DEFAULT 0,
+    share_count integer DEFAULT 0,
+    favorite_count integer DEFAULT 0,
+    star_count integer DEFAULT 0,
+    received_star_count integer DEFAULT 0,
+    average_rating numeric,
+
+    created_at timestamptz DEFAULT now(),
+    updated_at timestamptz DEFAULT now(),
+
+    UNIQUE (user_id, date)
+);
+
+ALTER TABLE public.user_stats
+ADD COLUMN favorite_count integer DEFAULT 0;
+
+ALTER TABLE public.user_stats
+ADD COLUMN favorite_count integer DEFAULT 0;
+
+ALTER TABLE public.user_stats
+ADD COLUMN star_count integer DEFAULT 0,
+ADD COLUMN received_star_count integer DEFAULT 0,
+ADD COLUMN average_rating numeric;
+
+CREATE OR REPLACE FUNCTION public.increment_star_count()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.user_stats (user_id, star_count)
+  VALUES (NEW.user_id, 1)
+  ON CONFLICT (user_id)
+  DO UPDATE SET star_count = user_stats.star_count + 1,
+                last_updated = now();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_increment_star_count
+AFTER INSERT ON public.stars
+FOR EACH ROW
+EXECUTE FUNCTION public.increment_star_count();
+
+CREATE OR REPLACE FUNCTION public.increment_star_count()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.user_stats (user_id, star_count)
+  VALUES (NEW.user_id, 1)
+  ON CONFLICT (user_id)
+  DO UPDATE SET star_count = user_stats.star_count + 1,
+                last_updated = now();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_increment_star_count
+AFTER INSERT ON public.stars
+FOR EACH ROW
+EXECUTE FUNCTION public.increment_star_count();
+
+CREATE TABLE IF NOT EXISTS public.dao_stats (
+    dao_id uuid PRIMARY KEY REFERENCES public.daos(id) ON DELETE CASCADE,
+
+    snft_count integer DEFAULT 0,
+    comment_count integer DEFAULT 0,
+    share_count integer DEFAULT 0,
+    star_count integer DEFAULT 0,
+    received_star_count integer DEFAULT 0,
+    average_rating numeric,
+    last_updated timestamptz DEFAULT now()
+);
+
+DROP TABLE IF EXISTS public.kudos CASCADE;
+
+CREATE TABLE public.kudos (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    from_user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+    to_user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+
+    context_type text NOT NULL CHECK (context_type IN (
+        'chat_message', 'comment', 'post', 'proposal', 'strategy'
+    )),
+    context_id text NOT NULL, -- The ID of the chat message, comment, etc.
+
+    reason text,             -- Optional: "great advice", "explained concept", etc.
+    value integer DEFAULT 1 CHECK (value >= 1), -- Default 1 kudos, or variable weighting
+
+    created_at timestamptz DEFAULT now()
+);
+
+-- Prevent double-kudos from the same person in the same context
+CREATE UNIQUE INDEX idx_kudos_unique ON public.kudos(from_user_id, context_type, context_id);
+
+CREATE INDEX idx_kudos_to_user ON public.kudos(to_user_id);
+
+ALTER TABLE public.kudos ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view kudos given to others" ON public.kudos
+    FOR SELECT USING (TRUE);
+CREATE POLICY "Users can give kudos" ON public.kudos
+    FOR INSERT WITH CHECK (auth.uid() = from_user_id);
+
+
+CREATE OR REPLACE FUNCTION public.apply_kudos_to_reputation()
+RETURNS TRIGGER AS $$
+BEGIN
+  UPDATE public.reputations
+  SET score = COALESCE(score, 0) + NEW.value,
+      last_updated = now()
+  WHERE subject_type = 'user' AND subject_id = NEW.to_user_id;
+
+  UPDATE public.user_stats
+  SET last_updated = now()
+  WHERE user_id = NEW.to_user_id;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_apply_kudos_to_reputation
+AFTER INSERT ON public.kudos
+FOR EACH ROW
+EXECUTE FUNCTION public.apply_kudos_to_reputation();
+
+DROP TABLE IF EXISTS public.mentions CASCADE;
+
+CREATE TABLE public.mentions (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    context_type text NOT NULL CHECK (context_type IN (
+        'chat_message', 'comment', 'post', 'proposal'
+    )),
+    context_id text NOT NULL,
+
+    mentioned_type text NOT NULL CHECK (mentioned_type IN ('user', 'dao')),
+    mentioned_id uuid NOT NULL,
+
+    mentioned_by uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+
+    -- Computed or provided by app/Edge Function
+    context_url text NOT NULL, -- e.g. /chat/room/abc#message-xyz
+
+    created_at timestamptz DEFAULT now()
+);
+
+CREATE INDEX idx_mentions_target ON public.mentions(mentioned_type, mentioned_id);
+
+ALTER TABLE public.user_stats
+ADD COLUMN mention_count integer DEFAULT 0;
+
+ALTER TABLE public.dao_stats
+ADD COLUMN mention_count integer DEFAULT 0;
+
+CREATE OR REPLACE FUNCTION public.increment_mention_count()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.mentioned_type = 'user' THEN
+    INSERT INTO public.user_stats (user_id, mention_count)
+    VALUES (NEW.mentioned_id, 1)
+    ON CONFLICT (user_id)
+    DO UPDATE SET mention_count = user_stats.mention_count + 1,
+                  last_updated = now();
+  ELSIF NEW.mentioned_type = 'dao' THEN
+    INSERT INTO public.dao_stats (dao_id, mention_count)
+    VALUES (NEW.mentioned_id, 1)
+    ON CONFLICT (dao_id)
+    DO UPDATE SET mention_count = dao_stats.mention_count + 1,
+                  last_updated = now();
+  END IF;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_increment_mention_count
+AFTER INSERT ON public.mentions
+FOR EACH ROW
+EXECUTE FUNCTION public.increment_mention_count();
+
+
+ALTER TABLE public.reputations
+ADD CONSTRAINT chk_subject_type_valid CHECK (
+  subject_type IN ('user', 'dao', 'snft')
+);
+
+CREATE TABLE public.snft_stats (
+    snft_id uuid PRIMARY KEY REFERENCES public.snfts(id) ON DELETE CASCADE,
+
+    favorite_count integer DEFAULT 0,
+    star_count integer DEFAULT 0,
+    average_rating numeric,
+    comment_count integer DEFAULT 0,
+    mention_count integer DEFAULT 0,
+    share_count integer DEFAULT 0,
+
+    last_updated timestamptz DEFAULT now()
+);
+
+ALTER TABLE public.mentions
+ADD CONSTRAINT chk_mention_type_valid CHECK (
+  mentioned_type IN ('user', 'dao', 'snft')
+);
