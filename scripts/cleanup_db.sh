@@ -1,62 +1,108 @@
 #!/bin/bash
 
-# This script removes all tables, functions, and triggers defined in
-# temp_corrected_schema.sql from your Supabase database.
-export DATABASE_URL="postgresql://postgres:Maddygaby75!@db.txqmcpmcduqrdwuvmxeg.supabase.co:5432/postgres"
+# Full Supabase database cleanup script
+# Requires DATABASE_URL, SUPABASE_URL, and SUPABASE_SERVICE_ROLE_KEY to be set in your environment
 
-# Ensure DATABASE_URL environment variable is set.
 if [ -z "$DATABASE_URL" ]; then
-    echo "Error: DATABASE_URL environment variable is not set."
-    echo "Please set it to your Supabase database connection string."
+    echo "❌ Error: DATABASE_URL is not set."
     exit 1
 fi
 
-echo "Attempting to clean up Supabase database based on temp_corrected_schema.sql..."
+echo "🧹 Starting full cleanup of Supabase database..."
 
-# Drop triggers first
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TRIGGER IF EXISTS trg_increment_snft_count ON public.snfts CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TRIGGER IF EXISTS trg_increment_trade_count ON public.trades CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TRIGGER IF EXISTS trg_increment_wallet_count ON public.wallets CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TRIGGER IF EXISTS set_ai_bot_configs_timestamp ON public.ai_bot_configs CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TRIGGER IF EXISTS set_orders_timestamp ON public.orders CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TRIGGER IF EXISTS set_user_investments_timestamp ON public.user_investments CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TRIGGER IF EXISTS set_properties_timestamp ON public.properties CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TRIGGER IF EXISTS set_snfts_timestamp ON public.snfts CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TRIGGER IF EXISTS set_auctions_timestamp ON public.auctions CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TRIGGER IF EXISTS set_trades_timestamp ON public.trades CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TRIGGER IF EXISTS set_trading_pairs_timestamp ON public.trading_pairs CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TRIGGER IF EXISTS set_bid_history_timestamp ON public.bid_history CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TRIGGER IF EXISTS set_transactions_timestamp ON public.transactions CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TRIGGER IF EXISTS set_dao_proposals_timestamp ON public.dao_proposals CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TRIGGER IF EXISTS set_dao_votes_timestamp ON public.dao_votes CASCADE;"
+# 1. Drop all user-defined triggers
+echo "🚫 Dropping all triggers..."
+psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 <<'EOSQL'
+DO $$
+DECLARE
+    trig RECORD;
+BEGIN
+    FOR trig IN
+        SELECT tgname, relname
+        FROM pg_trigger t
+        JOIN pg_class c ON t.tgrelid = c.oid
+        JOIN pg_namespace n ON c.relnamespace = n.oid
+        WHERE NOT t.tgisinternal AND n.nspname = 'public'
+    LOOP
+        EXECUTE format('DROP TRIGGER IF EXISTS %I ON public.%I CASCADE;', trig.tgname, trig.relname);
+    END LOOP;
+END$$;
+EOSQL
 
-# Drop tables in reverse dependency order
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TABLE IF EXISTS public.platform_metrics CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TABLE IF EXISTS public.user_stats CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TABLE IF EXISTS public.dao_votes CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TABLE IF EXISTS public.dao_proposals CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TABLE IF EXISTS public.transactions CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TABLE IF EXISTS public.bid_history CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TABLE IF EXISTS public.user_investments CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TABLE IF EXISTS public.orders CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TABLE IF EXISTS public.ai_bot_configs CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TABLE IF EXISTS public.trading_pairs CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TABLE IF EXISTS public.auctions CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TABLE IF EXISTS public.snfts CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TABLE IF EXISTS public.properties CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TABLE IF EXISTS public.collections CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TABLE IF EXISTS public.reputations CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP TABLE IF EXISTS public.wallets CASCADE;"
+# 2. Drop all views
+echo "🔭 Dropping all views..."
+psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 <<'EOSQL'
+DO $$
+DECLARE
+    view_rec RECORD;
+BEGIN
+    FOR view_rec IN
+        SELECT table_name
+        FROM information_schema.views
+        WHERE table_schema = 'public'
+    LOOP
+        EXECUTE format('DROP VIEW IF EXISTS public.%I CASCADE;', view_rec.table_name);
+    END LOOP;
+END$$;
+EOSQL
 
-# Drop functions last
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP FUNCTION IF EXISTS public.increment_snft_count() CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP FUNCTION IF EXISTS public.increment_trade_count() CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP FUNCTION IF EXISTS public.increment_wallet_count() CASCADE;"
-psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -c "DROP FUNCTION IF EXISTS public.set_update_timestamp() CASCADE;"
+# 3. Drop all tables
+echo "🗂️ Dropping all tables..."
+psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 <<'EOSQL'
+DO $$
+DECLARE
+    tbl RECORD;
+BEGIN
+    FOR tbl IN
+        SELECT tablename
+        FROM pg_tables
+        WHERE schemaname = 'public'
+    LOOP
+        EXECUTE format('DROP TABLE IF EXISTS public.%I CASCADE;', tbl.tablename);
+    END LOOP;
+END$$;
+EOSQL
 
-if [ $? -eq 0 ]; then
-    echo "✅ Database cleanup successful."
-else
-    echo "❌ Database cleanup failed. Please check the error messages above."
-    exit 1
-fi
+# 4. Drop all functions
+echo "🧠 Dropping all user-defined functions..."
+psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 <<'EOSQL'
+DO $$
+DECLARE
+    fn RECORD;
+BEGIN
+    FOR fn IN
+        SELECT p.proname, pg_get_function_identity_arguments(p.oid) AS args
+        FROM pg_proc p
+        JOIN pg_namespace n ON p.pronamespace = n.oid
+        WHERE n.nspname = 'public'
+    LOOP
+        EXECUTE format('DROP FUNCTION IF EXISTS public.%I(%s) CASCADE;', fn.proname, fn.args);
+    END LOOP;
+END$$;
+EOSQL
+
+# 5. Drop custom types (e.g. enums)
+echo "📦 Dropping custom types..."
+psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 <<'EOSQL'
+DO $$
+DECLARE
+    typ RECORD;
+BEGIN
+    FOR typ IN
+        SELECT t.typname
+        FROM pg_type t
+        JOIN pg_namespace n ON t.typnamespace = n.oid
+        WHERE n.nspname = 'public' AND t.typtype = 'e'
+    LOOP
+        EXECUTE format('DROP TYPE IF EXISTS public.%I CASCADE;', typ.typname);
+    END LOOP;
+END$$;
+EOSQL
+
+# 6. Truncate auth.users
+echo "🧽 Truncating all auth.users..."
+psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 <<'EOSQL'
+TRUNCATE auth.users CASCADE;
+EOSQL
+
+echo "✅ Database cleanup complete."

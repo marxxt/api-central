@@ -1,0 +1,319 @@
+psql:sql/temp_corrected_schema.sql:31: NOTICE:  drop cascades to constraint snfts_wallet_id_fkey on table snfts
+psql:sql/temp_corrected_schema.sql:43: NOTICE:  index "idx_wallets_user_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:49: NOTICE:  policy "Users can view their own wallets" for relation "public.wallets" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:50: NOTICE:  policy "Users can create their own wallets" for relation "public.wallets" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:51: NOTICE:  policy "Users can update their own wallets" for relation "public.wallets" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:52: NOTICE:  policy "Users can delete their own wallets" for relation "public.wallets" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:92: NOTICE:  index "idx_reputations_subject" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:101: NOTICE:  policy "Users can view their own reputations" for relation "public.reputations" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:112: NOTICE:  policy "Users can create their own reputations" for relation "public.reputations" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:123: NOTICE:  policy "Users can update their own reputations" for relation "public.reputations" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:137: NOTICE:  policy "Users can delete their own reputations" for relation "public.reputations" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:155: NOTICE:  drop cascades to constraint snfts_collection_id_fkey on table snfts
+psql:sql/temp_corrected_schema.sql:167: NOTICE:  index "idx_collections_user_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:173: NOTICE:  policy "Users can view their own collections" for relation "public.collections" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:174: NOTICE:  policy "Users can create their own collections" for relation "public.collections" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:175: NOTICE:  policy "Users can update their own collections" for relation "public.collections" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:176: NOTICE:  policy "Users can delete their own collections" for relation "public.collections" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:196: NOTICE:  drop cascades to 4 other objects
+DETAIL:  drop cascades to constraint auctions_property_id_fkey on table auctions
+drop cascades to constraint trading_pairs_base_asset_id_fkey on table trading_pairs
+drop cascades to constraint user_investments_property_asset_id_fkey on table user_investments
+drop cascades to constraint property_rewards_property_id_fkey on table property_rewards
+psql:sql/temp_corrected_schema.sql:225: NOTICE:  index "idx_properties_user_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:226: NOTICE:  index "idx_properties_token_symbol" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:227: NOTICE:  index "idx_properties_property_type" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:237: NOTICE:  policy "Users can view their own properties" for relation "public.properties" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:238: NOTICE:  policy "Users can create their own properties" for relation "public.properties" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:239: NOTICE:  policy "Users can update their own properties" for relation "public.properties" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:240: NOTICE:  policy "Users can delete their own properties" for relation "public.properties" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:262: NOTICE:  drop cascades to 3 other objects
+DETAIL:  drop cascades to constraint transactions_snft_id_fkey on table transactions
+drop cascades to policy Users can view their own transactions on table transactions
+drop cascades to policy Users can insert transactions on table transactions
+psql:sql/temp_corrected_schema.sql:292: NOTICE:  index "idx_snfts_wallet_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:293: NOTICE:  index "idx_snfts_owner_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:294: NOTICE:  index "idx_snfts_collection_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:295: NOTICE:  index "idx_snfts_category" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:304: NOTICE:  policy "Enable read access for all users" for relation "public.snfts" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:305: NOTICE:  policy "Users can create SNFTs" for relation "public.snfts" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:306: NOTICE:  policy "Users can update their SNFTs" for relation "public.snfts" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:307: NOTICE:  policy "Users can delete their SNFTs" for relation "public.snfts" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:327: NOTICE:  drop cascades to constraint bid_history_auction_id_fkey on table bid_history
+psql:sql/temp_corrected_schema.sql:341: NOTICE:  index "idx_auctions_property_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:342: NOTICE:  index "idx_auctions_seller_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:343: NOTICE:  index "idx_auctions_status" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:351: NOTICE:  policy "Enable read access for all users" for relation "public.auctions" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:352: NOTICE:  policy "Users can create their own auctions" for relation "public.auctions" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:353: NOTICE:  policy "Users can update their own auctions" for relation "public.auctions" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:354: NOTICE:  policy "Users can delete their own auctions" for relation "public.auctions" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:386: NOTICE:  index "idx_trades_user_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:387: NOTICE:  index "idx_trades_asset" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:388: NOTICE:  index "idx_trades_type" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:396: NOTICE:  policy "Users can view their own trades" for relation "public.trades" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:397: NOTICE:  policy "Users can create their own trades" for relation "public.trades" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:398: NOTICE:  policy "Users can update their own trades" for relation "public.trades" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:399: NOTICE:  policy "Users can delete their own trades" for relation "public.trades" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:419: NOTICE:  drop cascades to 2 other objects
+DETAIL:  drop cascades to constraint ai_bot_configs_trading_pair_id_fkey on table ai_bot_configs
+drop cascades to constraint orders_trading_pair_id_fkey on table orders
+psql:sql/temp_corrected_schema.sql:447: NOTICE:  index "idx_trading_pairs_base_asset_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:448: NOTICE:  index "idx_trading_pairs_base_asset_symbol" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:449: NOTICE:  index "idx_trading_pairs_quote_asset_symbol" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:460: NOTICE:  policy "Enable read access for all users" for relation "public.trading_pairs" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:495: NOTICE:  index "idx_ai_bot_configs_user_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:496: NOTICE:  index "idx_ai_bot_configs_trading_pair_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:505: NOTICE:  policy "Users can view their own bot configs" for relation "public.ai_bot_configs" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:506: NOTICE:  policy "Users can create their own bot configs" for relation "public.ai_bot_configs" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:507: NOTICE:  policy "Users can update their own bot configs" for relation "public.ai_bot_configs" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:508: NOTICE:  policy "Users can delete their own bot configs" for relation "public.ai_bot_configs" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:545: NOTICE:  index "idx_orders_user_pair_status" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:546: NOTICE:  index "idx_orders_trading_pair_status" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:552: NOTICE:  index "idx_orders_user_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:553: NOTICE:  index "idx_orders_trading_pair_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:554: NOTICE:  index "idx_orders_status" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:565: NOTICE:  policy "Users can view their own orders" for relation "public.orders" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:566: NOTICE:  policy "Users can create their own orders" for relation "public.orders" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:567: NOTICE:  policy "Users can update their own orders" for relation "public.orders" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:568: NOTICE:  policy "Users can delete their own orders" for relation "public.orders" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:608: NOTICE:  index "idx_user_investments_user_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:609: NOTICE:  index "idx_user_investments_property_asset_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:619: NOTICE:  policy "Users can view their own investments" for relation "public.user_investments" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:620: NOTICE:  policy "Users can create their own investments" for relation "public.user_investments" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:621: NOTICE:  policy "Users can update their own investments" for relation "public.user_investments" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:622: NOTICE:  policy "Users can delete their own investments" for relation "public.user_investments" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:656: NOTICE:  index "idx_bid_history_auction_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:657: NOTICE:  index "idx_bid_history_bidder" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:664: NOTICE:  policy "Enable read access for all users" for relation "public.bid_history" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:665: NOTICE:  policy "Users can create their own bids" for relation "public.bid_history" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:666: NOTICE:  policy "Users can update their own bids" for relation "public.bid_history" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:667: NOTICE:  policy "Users can delete their own bids" for relation "public.bid_history" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:700: NOTICE:  index "idx_transactions_snft_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:701: NOTICE:  index "idx_transactions_type" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:709: NOTICE:  policy "Users can view their own transactions" for relation "public.transactions" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:710: NOTICE:  policy "Users can insert transactions" for relation "public.transactions" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:726: NOTICE:  drop cascades to constraint dao_votes_proposal_id_fkey on table dao_votes
+psql:sql/temp_corrected_schema.sql:736: NOTICE:  index "idx_dao_proposals_created_at" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:742: NOTICE:  policy "Enable read access for all users" for relation "public.dao_proposals" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:743: NOTICE:  policy "Users can create DAO proposals" for relation "public.dao_proposals" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:774: NOTICE:  index "idx_dao_votes_proposal_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:775: NOTICE:  index "idx_dao_votes_user_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:782: NOTICE:  policy "Users can view their own votes" for relation "public.dao_votes" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:783: NOTICE:  policy "Users can create their own votes" for relation "public.dao_votes" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:784: NOTICE:  policy "Users can update their own votes" for relation "public.dao_votes" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:785: NOTICE:  policy "Users can delete their own votes" for relation "public.dao_votes" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:841: ERROR:  syntax error at or near "CREATE"
+LINE 4: CREATE OR REPLACE FUNCTION public.increment_snft_count()
+        ^
+psql:sql/temp_corrected_schema.sql:31: NOTICE:  drop cascades to constraint snfts_wallet_id_fkey on table snfts
+psql:sql/temp_corrected_schema.sql:43: NOTICE:  index "idx_wallets_user_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:49: NOTICE:  policy "Users can view their own wallets" for relation "public.wallets" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:50: NOTICE:  policy "Users can create their own wallets" for relation "public.wallets" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:51: NOTICE:  policy "Users can update their own wallets" for relation "public.wallets" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:52: NOTICE:  policy "Users can delete their own wallets" for relation "public.wallets" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:92: NOTICE:  index "idx_reputations_subject" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:101: NOTICE:  policy "Users can view their own reputations" for relation "public.reputations" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:112: NOTICE:  policy "Users can create their own reputations" for relation "public.reputations" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:123: NOTICE:  policy "Users can update their own reputations" for relation "public.reputations" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:137: NOTICE:  policy "Users can delete their own reputations" for relation "public.reputations" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:155: NOTICE:  drop cascades to constraint snfts_collection_id_fkey on table snfts
+psql:sql/temp_corrected_schema.sql:167: NOTICE:  index "idx_collections_user_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:173: NOTICE:  policy "Users can view their own collections" for relation "public.collections" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:174: NOTICE:  policy "Users can create their own collections" for relation "public.collections" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:175: NOTICE:  policy "Users can update their own collections" for relation "public.collections" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:176: NOTICE:  policy "Users can delete their own collections" for relation "public.collections" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:196: NOTICE:  drop cascades to 3 other objects
+DETAIL:  drop cascades to constraint auctions_property_id_fkey on table auctions
+drop cascades to constraint trading_pairs_base_asset_id_fkey on table trading_pairs
+drop cascades to constraint user_investments_property_asset_id_fkey on table user_investments
+psql:sql/temp_corrected_schema.sql:225: NOTICE:  index "idx_properties_user_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:226: NOTICE:  index "idx_properties_token_symbol" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:227: NOTICE:  index "idx_properties_property_type" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:237: NOTICE:  policy "Users can view their own properties" for relation "public.properties" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:238: NOTICE:  policy "Users can create their own properties" for relation "public.properties" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:239: NOTICE:  policy "Users can update their own properties" for relation "public.properties" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:240: NOTICE:  policy "Users can delete their own properties" for relation "public.properties" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:262: NOTICE:  drop cascades to 3 other objects
+DETAIL:  drop cascades to constraint transactions_snft_id_fkey on table transactions
+drop cascades to policy Users can view their own transactions on table transactions
+drop cascades to policy Users can insert transactions on table transactions
+psql:sql/temp_corrected_schema.sql:292: NOTICE:  index "idx_snfts_wallet_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:293: NOTICE:  index "idx_snfts_owner_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:294: NOTICE:  index "idx_snfts_collection_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:295: NOTICE:  index "idx_snfts_category" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:304: NOTICE:  policy "Enable read access for all users" for relation "public.snfts" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:305: NOTICE:  policy "Users can create SNFTs" for relation "public.snfts" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:306: NOTICE:  policy "Users can update their SNFTs" for relation "public.snfts" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:307: NOTICE:  policy "Users can delete their SNFTs" for relation "public.snfts" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:327: NOTICE:  drop cascades to constraint bid_history_auction_id_fkey on table bid_history
+psql:sql/temp_corrected_schema.sql:341: NOTICE:  index "idx_auctions_property_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:342: NOTICE:  index "idx_auctions_seller_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:343: NOTICE:  index "idx_auctions_status" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:351: NOTICE:  policy "Enable read access for all users" for relation "public.auctions" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:352: NOTICE:  policy "Users can create their own auctions" for relation "public.auctions" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:353: NOTICE:  policy "Users can update their own auctions" for relation "public.auctions" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:354: NOTICE:  policy "Users can delete their own auctions" for relation "public.auctions" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:386: NOTICE:  index "idx_trades_user_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:387: NOTICE:  index "idx_trades_asset" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:388: NOTICE:  index "idx_trades_type" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:396: NOTICE:  policy "Users can view their own trades" for relation "public.trades" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:397: NOTICE:  policy "Users can create their own trades" for relation "public.trades" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:398: NOTICE:  policy "Users can update their own trades" for relation "public.trades" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:399: NOTICE:  policy "Users can delete their own trades" for relation "public.trades" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:419: NOTICE:  drop cascades to 2 other objects
+DETAIL:  drop cascades to constraint ai_bot_configs_trading_pair_id_fkey on table ai_bot_configs
+drop cascades to constraint orders_trading_pair_id_fkey on table orders
+psql:sql/temp_corrected_schema.sql:447: NOTICE:  index "idx_trading_pairs_base_asset_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:448: NOTICE:  index "idx_trading_pairs_base_asset_symbol" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:449: NOTICE:  index "idx_trading_pairs_quote_asset_symbol" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:460: NOTICE:  policy "Enable read access for all users" for relation "public.trading_pairs" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:495: NOTICE:  index "idx_ai_bot_configs_user_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:496: NOTICE:  index "idx_ai_bot_configs_trading_pair_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:505: NOTICE:  policy "Users can view their own bot configs" for relation "public.ai_bot_configs" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:506: NOTICE:  policy "Users can create their own bot configs" for relation "public.ai_bot_configs" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:507: NOTICE:  policy "Users can update their own bot configs" for relation "public.ai_bot_configs" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:508: NOTICE:  policy "Users can delete their own bot configs" for relation "public.ai_bot_configs" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:545: NOTICE:  index "idx_orders_user_pair_status" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:546: NOTICE:  index "idx_orders_trading_pair_status" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:552: NOTICE:  index "idx_orders_user_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:553: NOTICE:  index "idx_orders_trading_pair_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:554: NOTICE:  index "idx_orders_status" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:565: NOTICE:  policy "Users can view their own orders" for relation "public.orders" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:566: NOTICE:  policy "Users can create their own orders" for relation "public.orders" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:567: NOTICE:  policy "Users can update their own orders" for relation "public.orders" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:568: NOTICE:  policy "Users can delete their own orders" for relation "public.orders" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:608: NOTICE:  index "idx_user_investments_user_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:609: NOTICE:  index "idx_user_investments_property_asset_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:619: NOTICE:  policy "Users can view their own investments" for relation "public.user_investments" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:620: NOTICE:  policy "Users can create their own investments" for relation "public.user_investments" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:621: NOTICE:  policy "Users can update their own investments" for relation "public.user_investments" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:622: NOTICE:  policy "Users can delete their own investments" for relation "public.user_investments" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:656: NOTICE:  index "idx_bid_history_auction_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:657: NOTICE:  index "idx_bid_history_bidder" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:664: NOTICE:  policy "Enable read access for all users" for relation "public.bid_history" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:665: NOTICE:  policy "Users can create their own bids" for relation "public.bid_history" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:666: NOTICE:  policy "Users can update their own bids" for relation "public.bid_history" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:667: NOTICE:  policy "Users can delete their own bids" for relation "public.bid_history" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:700: NOTICE:  index "idx_transactions_snft_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:701: NOTICE:  index "idx_transactions_type" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:709: NOTICE:  policy "Users can view their own transactions" for relation "public.transactions" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:710: NOTICE:  policy "Users can insert transactions" for relation "public.transactions" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:726: NOTICE:  drop cascades to constraint dao_votes_proposal_id_fkey on table dao_votes
+psql:sql/temp_corrected_schema.sql:736: NOTICE:  index "idx_dao_proposals_created_at" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:742: NOTICE:  policy "Enable read access for all users" for relation "public.dao_proposals" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:743: NOTICE:  policy "Users can create DAO proposals" for relation "public.dao_proposals" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:774: NOTICE:  index "idx_dao_votes_proposal_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:775: NOTICE:  index "idx_dao_votes_user_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:782: NOTICE:  policy "Users can view their own votes" for relation "public.dao_votes" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:783: NOTICE:  policy "Users can create their own votes" for relation "public.dao_votes" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:784: NOTICE:  policy "Users can update their own votes" for relation "public.dao_votes" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:785: NOTICE:  policy "Users can delete their own votes" for relation "public.dao_votes" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:841: ERROR:  syntax error at or near "CREATE"
+LINE 4: CREATE OR REPLACE FUNCTION public.increment_snft_count()
+        ^
+psql:sql/temp_corrected_schema.sql:31: NOTICE:  drop cascades to constraint snfts_wallet_id_fkey on table snfts
+psql:sql/temp_corrected_schema.sql:43: NOTICE:  index "idx_wallets_user_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:49: NOTICE:  policy "Users can view their own wallets" for relation "public.wallets" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:50: NOTICE:  policy "Users can create their own wallets" for relation "public.wallets" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:51: NOTICE:  policy "Users can update their own wallets" for relation "public.wallets" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:52: NOTICE:  policy "Users can delete their own wallets" for relation "public.wallets" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:92: NOTICE:  index "idx_reputations_subject" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:101: NOTICE:  policy "Users can view their own reputations" for relation "public.reputations" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:112: NOTICE:  policy "Users can create their own reputations" for relation "public.reputations" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:123: NOTICE:  policy "Users can update their own reputations" for relation "public.reputations" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:137: NOTICE:  policy "Users can delete their own reputations" for relation "public.reputations" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:155: NOTICE:  drop cascades to constraint snfts_collection_id_fkey on table snfts
+psql:sql/temp_corrected_schema.sql:167: NOTICE:  index "idx_collections_user_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:173: NOTICE:  policy "Users can view their own collections" for relation "public.collections" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:174: NOTICE:  policy "Users can create their own collections" for relation "public.collections" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:175: NOTICE:  policy "Users can update their own collections" for relation "public.collections" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:176: NOTICE:  policy "Users can delete their own collections" for relation "public.collections" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:196: NOTICE:  drop cascades to 3 other objects
+DETAIL:  drop cascades to constraint auctions_property_id_fkey on table auctions
+drop cascades to constraint trading_pairs_base_asset_id_fkey on table trading_pairs
+drop cascades to constraint user_investments_property_asset_id_fkey on table user_investments
+psql:sql/temp_corrected_schema.sql:225: NOTICE:  index "idx_properties_user_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:226: NOTICE:  index "idx_properties_token_symbol" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:227: NOTICE:  index "idx_properties_property_type" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:237: NOTICE:  policy "Users can view their own properties" for relation "public.properties" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:238: NOTICE:  policy "Users can create their own properties" for relation "public.properties" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:239: NOTICE:  policy "Users can update their own properties" for relation "public.properties" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:240: NOTICE:  policy "Users can delete their own properties" for relation "public.properties" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:262: NOTICE:  drop cascades to 3 other objects
+DETAIL:  drop cascades to constraint transactions_snft_id_fkey on table transactions
+drop cascades to policy Users can view their own transactions on table transactions
+drop cascades to policy Users can insert transactions on table transactions
+psql:sql/temp_corrected_schema.sql:292: NOTICE:  index "idx_snfts_wallet_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:293: NOTICE:  index "idx_snfts_owner_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:294: NOTICE:  index "idx_snfts_collection_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:295: NOTICE:  index "idx_snfts_category" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:304: NOTICE:  policy "Enable read access for all users" for relation "public.snfts" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:305: NOTICE:  policy "Users can create SNFTs" for relation "public.snfts" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:306: NOTICE:  policy "Users can update their SNFTs" for relation "public.snfts" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:307: NOTICE:  policy "Users can delete their SNFTs" for relation "public.snfts" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:327: NOTICE:  drop cascades to constraint bid_history_auction_id_fkey on table bid_history
+psql:sql/temp_corrected_schema.sql:341: NOTICE:  index "idx_auctions_property_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:342: NOTICE:  index "idx_auctions_seller_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:343: NOTICE:  index "idx_auctions_status" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:351: NOTICE:  policy "Enable read access for all users" for relation "public.auctions" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:352: NOTICE:  policy "Users can create their own auctions" for relation "public.auctions" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:353: NOTICE:  policy "Users can update their own auctions" for relation "public.auctions" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:354: NOTICE:  policy "Users can delete their own auctions" for relation "public.auctions" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:386: NOTICE:  index "idx_trades_user_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:387: NOTICE:  index "idx_trades_asset" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:388: NOTICE:  index "idx_trades_type" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:396: NOTICE:  policy "Users can view their own trades" for relation "public.trades" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:397: NOTICE:  policy "Users can create their own trades" for relation "public.trades" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:398: NOTICE:  policy "Users can update their own trades" for relation "public.trades" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:399: NOTICE:  policy "Users can delete their own trades" for relation "public.trades" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:419: NOTICE:  drop cascades to 2 other objects
+DETAIL:  drop cascades to constraint ai_bot_configs_trading_pair_id_fkey on table ai_bot_configs
+drop cascades to constraint orders_trading_pair_id_fkey on table orders
+psql:sql/temp_corrected_schema.sql:447: NOTICE:  index "idx_trading_pairs_base_asset_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:448: NOTICE:  index "idx_trading_pairs_base_asset_symbol" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:449: NOTICE:  index "idx_trading_pairs_quote_asset_symbol" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:460: NOTICE:  policy "Enable read access for all users" for relation "public.trading_pairs" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:495: NOTICE:  index "idx_ai_bot_configs_user_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:496: NOTICE:  index "idx_ai_bot_configs_trading_pair_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:505: NOTICE:  policy "Users can view their own bot configs" for relation "public.ai_bot_configs" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:506: NOTICE:  policy "Users can create their own bot configs" for relation "public.ai_bot_configs" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:507: NOTICE:  policy "Users can update their own bot configs" for relation "public.ai_bot_configs" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:508: NOTICE:  policy "Users can delete their own bot configs" for relation "public.ai_bot_configs" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:545: NOTICE:  index "idx_orders_user_pair_status" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:546: NOTICE:  index "idx_orders_trading_pair_status" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:552: NOTICE:  index "idx_orders_user_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:553: NOTICE:  index "idx_orders_trading_pair_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:554: NOTICE:  index "idx_orders_status" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:565: NOTICE:  policy "Users can view their own orders" for relation "public.orders" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:566: NOTICE:  policy "Users can create their own orders" for relation "public.orders" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:567: NOTICE:  policy "Users can update their own orders" for relation "public.orders" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:568: NOTICE:  policy "Users can delete their own orders" for relation "public.orders" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:608: NOTICE:  index "idx_user_investments_user_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:609: NOTICE:  index "idx_user_investments_property_asset_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:619: NOTICE:  policy "Users can view their own investments" for relation "public.user_investments" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:620: NOTICE:  policy "Users can create their own investments" for relation "public.user_investments" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:621: NOTICE:  policy "Users can update their own investments" for relation "public.user_investments" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:622: NOTICE:  policy "Users can delete their own investments" for relation "public.user_investments" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:656: NOTICE:  index "idx_bid_history_auction_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:657: NOTICE:  index "idx_bid_history_bidder" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:664: NOTICE:  policy "Enable read access for all users" for relation "public.bid_history" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:665: NOTICE:  policy "Users can create their own bids" for relation "public.bid_history" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:666: NOTICE:  policy "Users can update their own bids" for relation "public.bid_history" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:667: NOTICE:  policy "Users can delete their own bids" for relation "public.bid_history" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:700: NOTICE:  index "idx_transactions_snft_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:701: NOTICE:  index "idx_transactions_type" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:709: NOTICE:  policy "Users can view their own transactions" for relation "public.transactions" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:710: NOTICE:  policy "Users can insert transactions" for relation "public.transactions" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:726: NOTICE:  drop cascades to constraint dao_votes_proposal_id_fkey on table dao_votes
+psql:sql/temp_corrected_schema.sql:736: NOTICE:  index "idx_dao_proposals_created_at" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:742: NOTICE:  policy "Enable read access for all users" for relation "public.dao_proposals" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:743: NOTICE:  policy "Users can create DAO proposals" for relation "public.dao_proposals" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:774: NOTICE:  index "idx_dao_votes_proposal_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:775: NOTICE:  index "idx_dao_votes_user_id" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:782: NOTICE:  policy "Users can view their own votes" for relation "public.dao_votes" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:783: NOTICE:  policy "Users can create their own votes" for relation "public.dao_votes" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:784: NOTICE:  policy "Users can update their own votes" for relation "public.dao_votes" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:785: NOTICE:  policy "Users can delete their own votes" for relation "public.dao_votes" does not exist, skipping
+psql:sql/temp_corrected_schema.sql:841: ERROR:  syntax error at or near "CREATE"
+LINE 4: CREATE OR REPLACE FUNCTION public.increment_snft_count()
+        ^
