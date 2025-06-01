@@ -1,26 +1,36 @@
-import os
-from dotenv import load_dotenv
-from supabase import create_client, Client
+# config.py
 
+import os
+from pydantic_settings import BaseSettings
+from pydantic import AnyUrl, SecretStr
+from typing import cast
+from dotenv import load_dotenv
+
+# Load environment variables from a .env file, if present
 load_dotenv()
 
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-if not SUPABASE_URL:
-    raise ValueError("Missing SUPABASE_URL in .env")
+class Settings(BaseSettings):
+    """
+    Application configuration settings.
+    Values are loaded from environment variables or a .env file.
+    """
 
-if not SUPABASE_SERVICE_ROLE_KEY:
-    raise ValueError("Missing SUPABASE_SERVICE_ROLE_KEY in .env")
+    # Supabase configurations
+    SUPABASE_URL: str
+    SUPABASE_SERVICE_ROLE_KEY: str
+    SUPABASE_KEY: str
 
-if not SUPABASE_KEY:
-    raise ValueError("Missing SUPABASE_KEY in .env")
+    # Application settings
+    ENV: str = "development"
+    DEBUG: bool = False
 
-# 🔐 Admin client (auth.admin access)
-supabase_admin: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+    class Config:
+        env_file = ".env"
+        env_file_encoding = "utf-8"
 
-# 🤖 Bot/Service client (for server-to-server interaction)
-supabase_bot: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
-
-# 👤 User client (for frontend or authenticated sessions)
-supabase_public: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+# Instantiate the settings, so they can be imported elsewhere
+settings = Settings(
+    SUPABASE_URL = os.environ["SUPABASE_URL"],
+    SUPABASE_KEY = os.environ["SUPABASE_KEY"],
+    SUPABASE_SERVICE_ROLE_KEY = os.environ["SUPABASE_SERVICE_ROLE_KEY"],
+)

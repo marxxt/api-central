@@ -3,14 +3,14 @@
 import os
 from dotenv import load_dotenv
 from supabase import create_client, Client
-
+from config import settings
 # Load environment variables from .env file
 load_dotenv()
 
 # Retrieve environment variables
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+SUPABASE_URL = settings.SUPABASE_URL
+SUPABASE_SERVICE_ROLE_KEY = settings.SUPABASE_SERVICE_ROLE_KEY
+SUPABASE_KEY = settings.SUPABASE_KEY
 
 # Validate environment variables
 if not SUPABASE_URL:
