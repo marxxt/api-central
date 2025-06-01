@@ -1,55 +1,64 @@
-import uuid
 from faker import Faker
 from supabase import Client
-from config import supabase_admin  # <-- Reuse centralized config
-import requests
+from config import supabase_admin
+from pydantic import BaseModel, EmailStr, Field
+from typing import List
 
 fake = Faker()
 
-def fetch_avatar(random: str):
-    url = "https://i.pravatar.cc/150?u"+random
-    return requests.get(url)
+class UserMetadata(BaseModel):
+    username: str
+    first_name: str
+    last_name: str
+    full_name: str
+    avatar_url: str
 
-def generate_fake_users(num_users=10):
-    """Generates fake user data for Supabase Auth."""
+class UserInput(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=8)
+    user_metadata: UserMetadata
+
+def fetch_avatar(unique_string: str) -> str:
+    return f"https://i.pravatar.cc/150?u={unique_string}"
+
+def generate_fake_users(num_users: int = 10) -> List[UserInput]:
     users = []
     for _ in range(num_users):
         email = fake.unique.email()
-        password = 'Password123'
         username = fake.unique.user_name()
         first_name = fake.first_name()
         last_name = fake.last_name()
-        avatar_url = "https://i.pravatar.cc/150?u"+username
-        users.append({
-            "email": email,
-            "password": password,
-            "user_metadata": {
-                "username": username,
-                "first_name": first_name,
-                "last_name": last_name,
-                "full_name": first_name+" "+last_name,
-                "avatar_url": avatar_url
-            }
-        })
+        full_name = f"{first_name} {last_name}"
+        avatar_url = fetch_avatar(username)
+        
+        user_metadata = UserMetadata(
+            username=username,
+            first_name=first_name,
+            last_name=last_name,
+            full_name=full_name,
+            avatar_url=avatar_url
+        )
+        
+        user = UserInput(
+            email=email,
+            password="Password123",
+            user_metadata=user_metadata
+        )
+        users.append(user)
     return users
 
-def insert_fake_users(supabase: Client, users):
+def insert_fake_users(supabase: Client, users: List[UserInput]) -> List[str]:
     inserted_users = []
     for user in users:
         try:
             response = supabase.auth.admin.create_user({
-                "email": user["email"],
-                "password": user["password"],
-                "user_metadata": user["user_metadata"],
-                "email_confirm": True
+                "email": user.email,
+                "password": user.password,
+                "user_metadata": user.user_metadata.model_dump()
             })
-            
-            # print(f"✅ Created: {response.user.id}")
             inserted_users.append(response.user.id)
         except Exception as e:
-            print(f"❌ Error creating user {user['email']}: {e}")
-    
-    # print("user ids :", inserted_users, flush=True)
+            print(f"❌ Error creating user {user.email}: {e}")
     return inserted_users
 
 if __name__ == "__main__":
