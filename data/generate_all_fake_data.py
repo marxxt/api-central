@@ -1,3 +1,5 @@
+# data/generate_all_fake_data.py
+
 import os
 import uuid # Added import for uuid
 import psycopg2
@@ -7,48 +9,48 @@ from dotenv import load_dotenv
 from db_utils import supabase_admin  # <-- Reuse centralized config
 
 # Import individual data generation modules
-from .data_generators.users_generator import generate_fake_users, insert_fake_users
-from .data_generators.wallets_generator import generate_fake_wallets, insert_fake_wallets
-from .data_generators.db_collections_generator import generate_fake_collections, insert_fake_collections
-from .data_generators.properties_generator import generate_fake_properties, insert_fake_properties
-from .data_generators.daos_generator import generate_fake_daos, insert_fake_daos
-from .data_generators.snfts_generator import generate_fake_snfts, insert_fake_snfts
-from .data_generators.auctions_generator import generate_fake_auctions, insert_fake_auctions
-from .data_generators.trades_generator import generate_fake_trades, insert_fake_trades
-from .data_generators.trading_pairs_generator import generate_fake_trading_pairs, insert_fake_trading_pairs
-from .data_generators.ai_bot_configs_generator import generate_fake_ai_bot_configs, insert_fake_ai_bot_configs
-from .data_generators.orders_generator import generate_fake_orders, insert_fake_orders
-from .data_generators.user_investments_generator import generate_fake_user_investments, insert_fake_user_investments
-from .data_generators.bid_history_generator import generate_fake_bid_history, insert_fake_bid_history
-from .data_generators.transactions_generator import generate_fake_transactions, insert_fake_transactions
-from .data_generators.dao_proposals_generator import generate_fake_dao_proposals, insert_fake_dao_proposals
-from .data_generators.dao_votes_generator import generate_fake_dao_votes, insert_fake_dao_votes
-from .data_generators.user_stats_generator import generate_fake_user_stats, insert_fake_user_stats
-from .data_generators.snft_stats_generator import generate_fake_snft_stats, insert_fake_snft_stats
-from .data_generators.platform_metrics_generator import generate_fake_platform_metrics, insert_fake_platform_metrics
-from .data_generators.property_token_ownership_generator import generate_fake_property_token_ownership, insert_fake_property_token_ownership
-from .data_generators.property_token_transfers_generator import generate_fake_property_token_transfers, insert_fake_property_token_transfers
-from .data_generators.contractors_generator import generate_fake_contractors, insert_fake_contractors
-from .data_generators.dao_members_generator import generate_fake_dao_members, insert_fake_dao_members
-from .data_generators.dao_managers_generator import generate_fake_dao_managers, insert_fake_dao_managers
-from .data_generators.dao_contractors_generator import generate_fake_dao_contractors, insert_fake_dao_contractors
-from .data_generators.dao_token_holdings_generator import generate_fake_dao_token_holdings, insert_fake_dao_token_holdings
-from .data_generators.snft_balances_generator import generate_fake_snft_balances, insert_fake_snft_balances
-from .data_generators.snft_mint_events_generator import generate_fake_snft_mint_events, insert_fake_snft_mint_events
-from .data_generators.snft_events_generator import generate_fake_snft_events, insert_fake_snft_events
-from .data_generators.snft_metadata_retry_queue_generator import generate_fake_snft_metadata_retry_queue, insert_fake_snft_metadata_retry_queue
-from .data_generators.favorites_generator import generate_fake_favorites, insert_fake_favorites
-from .data_generators.stars_generator import generate_fake_stars, insert_fake_stars
-from .data_generators.comments_generator import generate_fake_comments, insert_fake_comments
-from .data_generators.shares_generator import generate_fake_shares, insert_fake_shares
-from .data_generators.daily_rollup_user_stats_generator import generate_fake_daily_rollup_user_stats, insert_fake_daily_rollup_user_stats
-from .data_generators.dao_stats_generator import generate_fake_dao_stats, insert_fake_dao_stats
-from .data_generators.kudos_generator import generate_fake_kudos, insert_fake_kudos
-from .data_generators.mentions_generator import generate_fake_mentions, insert_fake_mentions
-from .data_generators.notifications_generator import generate_fake_notifications, insert_fake_notifications
-from .data_generators.ip_event_log_generator import generate_fake_ip_event_log, insert_fake_ip_event_log
-from .data_generators.property_rewards_generator import generate_fake_property_rewards, insert_fake_property_rewards
-from .data_generators.dao_voting_epochs_generator import generate_fake_dao_voting_epochs, insert_fake_dao_voting_epochs
+from data_generators.users_generator import generate_fake_users, insert_fake_users
+from data_generators.wallets_generator import generate_fake_wallets, insert_fake_wallets
+from data_generators.db_collections_generator import generate_fake_collections, insert_fake_collections
+from data_generators.properties_generator import generate_fake_properties, insert_fake_properties
+from data_generators.daos_generator import generate_fake_daos, insert_fake_daos
+from data_generators.snfts_generator import generate_fake_snfts, insert_fake_snfts
+from data_generators.auctions_generator import generate_fake_auctions, insert_fake_auctions
+from data_generators.trades_generator import generate_fake_trades, insert_fake_trades
+from data_generators.trading_pairs_generator import generate_fake_trading_pairs, insert_fake_trading_pairs
+from data_generators.ai_bot_configs_generator import generate_fake_ai_bot_configs, insert_fake_ai_bot_configs
+from data_generators.orders_generator import generate_fake_orders, insert_fake_orders
+from data_generators.user_investments_generator import generate_fake_user_investments, insert_fake_user_investments
+from data_generators.bid_history_generator import generate_fake_bid_history, insert_fake_bid_history
+from data_generators.transactions_generator import generate_fake_transactions, insert_fake_transactions
+from data_generators.dao_proposals_generator import generate_fake_dao_proposals, insert_fake_dao_proposals
+from data_generators.dao_votes_generator import generate_fake_dao_votes, insert_fake_dao_votes
+from data_generators.user_stats_generator import generate_fake_user_stats, insert_fake_user_stats
+from data_generators.snft_stats_generator import generate_fake_snft_stats, insert_fake_snft_stats
+from data_generators.platform_metrics_generator import generate_fake_platform_metrics, insert_fake_platform_metrics
+from data_generators.property_token_ownership_generator import generate_fake_property_token_ownership, insert_fake_property_token_ownership
+from data_generators.property_token_transfers_generator import generate_fake_property_token_transfers, insert_fake_property_token_transfers
+from data_generators.contractors_generator import generate_fake_contractors, insert_fake_contractors
+from data_generators.dao_members_generator import generate_fake_dao_members, insert_fake_dao_members
+from data_generators.dao_managers_generator import generate_fake_dao_managers, insert_fake_dao_managers
+from data_generators.dao_contractors_generator import generate_fake_dao_contractors, insert_fake_dao_contractors
+from data_generators.dao_token_holdings_generator import generate_fake_dao_token_holdings, insert_fake_dao_token_holdings
+from data_generators.snft_balances_generator import generate_fake_snft_balances, insert_fake_snft_balances
+from data_generators.snft_mint_events_generator import generate_fake_snft_mint_events, insert_fake_snft_mint_events
+from data_generators.snft_events_generator import generate_fake_snft_events, insert_fake_snft_events
+from data_generators.snft_metadata_retry_queue_generator import generate_fake_snft_metadata_retry_queue, insert_fake_snft_metadata_retry_queue
+from data_generators.favorites_generator import generate_fake_favorites, insert_fake_favorites
+from data_generators.stars_generator import generate_fake_stars, insert_fake_stars
+from data_generators.comments_generator import generate_fake_comments, insert_fake_comments
+from data_generators.shares_generator import generate_fake_shares, insert_fake_shares
+from data_generators.daily_rollup_user_stats_generator import generate_fake_daily_rollup_user_stats, insert_fake_daily_rollup_user_stats
+from data_generators.dao_stats_generator import generate_fake_dao_stats, insert_fake_dao_stats
+from data_generators.kudos_generator import generate_fake_kudos, insert_fake_kudos
+from data_generators.mentions_generator import generate_fake_mentions, insert_fake_mentions
+from data_generators.notifications_generator import generate_fake_notifications, insert_fake_notifications
+from data_generators.ip_event_log_generator import generate_fake_ip_event_log, insert_fake_ip_event_log
+from data_generators.property_rewards_generator import generate_fake_property_rewards, insert_fake_property_rewards
+from data_generators.dao_voting_epochs_generator import generate_fake_dao_voting_epochs, insert_fake_dao_voting_epochs
 
 
 # Load environment variables
@@ -102,8 +104,8 @@ def main():
             snfts_data = generate_fake_snfts(wallet_ids, user_ids, collection_ids, property_ids, dao_ids, num_snfts_per_property=1)
             snft_ids = insert_fake_snfts(snfts_data)
 
-            # # Update DAOs with SNFT IDs if snft_id is not nullable and you want to link them
-            # # For now, it's nullable, so we proceed.
+            # Update DAOs with SNFT IDs if snft_id is not nullable and you want to link them
+            # For now, it's nullable, so we proceed.
 
             # print("\n--- Generating Auctions ---")
             # auctions_data = generate_fake_auctions(property_ids, user_ids)

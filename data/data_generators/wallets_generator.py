@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 from pydantic.types import condecimal
 
 PositiveDecimal = Annotated[condecimal(gt=0), Field(description="Decimal value greater than 0")]
-from config import supabase_bot
+from db_utils import supabase_bot
 
 fake = Faker()
 

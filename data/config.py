@@ -24,9 +24,11 @@ class Settings(BaseSettings):
     ENV: str = "development"
     DEBUG: bool = False
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+    model_config = {
+        "env_file": ".env",
+        "env_file_encoding": "utf-8",
+        "extra": "ignore"  # Allow unrelated fields like SUPABASE_JWT_SECRET, DATABASE_URL
+    }
 
 # Instantiate the settings, so they can be imported elsewhere
 settings = Settings(

@@ -2,7 +2,7 @@ import uuid
 import random
 from datetime import datetime, timedelta, timezone
 from faker import Faker
-from config import supabase_bot  # 🔁 Reuse shared client
+from db_utils import supabase_bot  # 🔁 Reuse shared client
 
 fake = Faker()
 
@@ -22,6 +22,7 @@ def generate_fake_snfts(wallet_ids, owner_ids, collection_ids, property_ids, dao
             snfts.append({
                 "wallet_id": wallet_id,
                 "owner_id": owner_id,
+                "dao_id": dao_id,
                 "name": fake.word().capitalize() + " SNFT",
                 "description": fake.paragraph(),
                 "image_url": fake.image_url(),
@@ -32,26 +33,8 @@ def generate_fake_snfts(wallet_ids, owner_ids, collection_ids, property_ids, dao
                 "date_listed": fake.date_time_between(start_date="-1y", end_date="now", tzinfo=timezone.utc).isoformat(),
                 "category": fake.word(),
                 "collection_id": collection_id,
-                "bid_price": str(round(random.uniform(500, 90000), 2)),
                 "metadata_status": random.choice(['complete', 'pending', 'failed']),
-                "numeric_bid_price": round(random.uniform(500, 90000), 2),
                 "status": random.choice(statuses),
-                "property_id": prop_id,
-                "contract_address": fake.sha256(),
-                "dao_id": dao_id,
-                "trust_id": str(uuid.uuid4()) if random.random() > 0.5 else None,
-                "total_tokens": random.randint(10000, 1000000),
-                "tokens_sold": random.randint(0, 50000),
-                "token_price": round(random.uniform(0.1, 10.0), 2),
-                "sale_status": random.choice(sale_statuses),
-                "metadata_uri": fake.url(),
-                "metadata_hash": fake.sha256(),
-                "legal_doc_urls": {"trust_agreement": fake.url(), "dao_agreement": fake.url()} if random.random() > 0.5 else None,
-                "notarization_status": random.choice(['pending', 'complete', 'rejected']),
-                "wizard_progress": {"step": random.randint(1, 5), "completed": random.sample(['property', 'images', 'docs', 'mint'], k=random.randint(0, 4))},
-                "deployed_at": fake.date_time_between(start_date="-6m", end_date="now", tzinfo=timezone.utc).isoformat() if random.random() > 0.3 else None,
-                "preview_uri": fake.url() if random.random() > 0.2 else None,
-                "expires_at": fake.date_time_between(start_date="now", end_date="+6m", tzinfo=timezone.utc).isoformat()
             })
     return snfts
 

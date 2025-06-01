@@ -3,7 +3,7 @@ from typing import Annotated, List
 import uuid
 from pydantic import BaseModel, Field, conint
 from faker import Faker
-from config import supabase_bot  # Use the shared Supabase client
+from db_utils import supabase_bot  # Use the shared Supabase client
 PositiveInt = Annotated[conint(gt=0), Field(description="int value greater than 0")]
 
 fake = Faker()

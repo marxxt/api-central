@@ -1,6 +1,6 @@
 from faker import Faker
 from supabase import Client
-from config import supabase_admin
+from db_utils import supabase_admin
 from pydantic import BaseModel, EmailStr, Field
 from typing import List
 

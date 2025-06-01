@@ -1,3 +1,5 @@
+#  data/data_generators/properties_generators.py
+
 from decimal import Decimal
 import uuid
 import random
@@ -5,7 +7,7 @@ from datetime import timezone
 from typing import Annotated, List
 from pydantic import BaseModel, UUID4, Field, constr, condecimal, conint
 from faker import Faker
-from config import supabase_bot
+from db_utils import supabase_bot
 
 PositiveDecimal = Annotated[condecimal(gt=0), Field(description="Decimal value greater than 0")]
 PositiveInt = Annotated[conint(gt=0), Field(description="int value greater than 0")]
