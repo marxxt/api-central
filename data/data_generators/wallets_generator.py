@@ -37,8 +37,9 @@ def insert_fake_wallets(wallets: List[Wallet]) -> List[List[str]]:
     wallet_ids = []
     for wallet in wallets:
         try:
-            wallet_data = wallet.model_dump()
+            wallet_data = wallet.model_dump(exclude_none=True)
             wallet_data["balance"] = str(wallet_data["balance"])
+            print(f"DEBUG: Attempting to upsert wallet_data: {wallet_data}")
             response = supabase_bot.table("wallets").upsert(wallet_data).execute()
             inserted = response.data[0]
             print(f"✅ Inserted wallet for user {inserted['user_id']}")
@@ -48,7 +49,7 @@ def insert_fake_wallets(wallets: List[Wallet]) -> List[List[str]]:
     return wallet_ids
 
 if __name__ == "__main__":
-    dummy_user_ids = [str(uuid.uuid4() for _ in range(3))]
+    dummy_user_ids = [str(uuid.uuid4()) for _ in range(3)]
     wallets_data = generate_fake_wallets(dummy_user_ids)
     insert_fake_wallets(wallets_data)
     print("🏁 Wallet data generation and insertion complete.")

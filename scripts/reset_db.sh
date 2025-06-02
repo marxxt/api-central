@@ -34,4 +34,10 @@ psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -f "sql/08_dao_cap_table_view.sql"
 echo "📄 Executing 09_dao_voting_epochs.sql..."
 psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -f "sql/09_dao_voting_epochs.sql"
 
+echo "📄 Executing 10_trade_signals.sql..."
+psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -f "sql/10_trade_signals.sql"
+
+echo "📄 Executing 11_RLS.sql..."
+psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -f "sql/11_RLS.sql"
+
 echo "✅ Database reset completed."

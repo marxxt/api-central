@@ -1,115 +1,186 @@
+from datetime import datetime, timedelta, timezone
+import json
 import uuid
 import random
-from datetime import datetime, timedelta, timezone
+from typing import List, Tuple, Union
+from decimal import Decimal
 from faker import Faker
-import psycopg2
-from psycopg2 import Error
+from pydantic import BaseModel, Field
+from db_utils import supabase_bot
 
 fake = Faker()
 
-def generate_fake_trading_pairs(property_ids, num_pairs_per_property=1):
-    """Generates fake trading pair data."""
-    trading_pairs = []
-    quote_assets = ["USDC", "ETH", "USDT"]
+# --- Pydantic Models ---
 
-    for prop_id in property_ids:
+class OHLCModel(BaseModel):
+    pair_id: str
+    time: datetime
+    open: str
+    high: str
+    low: str
+    close: str
+
+class VolumeModel(BaseModel):
+    pair_id: str
+    time: datetime
+    value: str
+    color: str
+
+class TradingPairModel(BaseModel):
+    pairs: str
+    base_asset_id: str
+    base_asset_symbol: str
+    quote_asset_symbol: str
+    last_price: str
+    price_change_24h_percent: str
+    high_24h: str
+    low_24h: str
+    volume_24h_base: str
+    volume_24h_quote: str
+    is_favorite: bool
+    order_book_id: str
+
+class TradingPairReturn(BaseModel):
+    trading_pair_model: TradingPairModel
+    temp_trading_pair_uuid: str
+
+class JSONEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, Decimal):
+            return float(o)
+        return json.JSONEncoder.default(self, o)
+    
+class DateTimeEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, datetime):
+            return o.isoformat()
+        return json.JSONEncoder.default(self, o)
+    
+# --- Generator Functions ---
+
+def generate_trading_pair_and_history(property_ids: List[List[str]], num_pairs_per_property: int = 1):
+    trading_pairs: List[TradingPairReturn] = []
+    ohlc_rows = []
+    volume_rows = []
+
+    quote_assets = ["USDC", "ETH", "USDT", "BELLS"]
+    num_days = random.randint(60, 90)
+    end_date = datetime.now(timezone.utc)
+    start_date = end_date - timedelta(days=num_days)
+
+    for prop in property_ids:
         for _ in range(num_pairs_per_property):
-            base_asset_symbol = fake.unique.lexify(text="???", letters="ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-            quote_asset_symbol = random.choice(quote_assets)
-            pair_id = f"{base_asset_symbol}_{quote_asset_symbol}"
+            base_symbol = fake.unique.lexify(text="???").upper()
+            quote_symbol = random.choice(quote_assets)
+            pair_name = f"{base_symbol}_{quote_symbol}"
+            temp_trading_pair_uuid = str(uuid.uuid4())
+            current_price = Decimal(str(round(random.uniform(10, 100), 2)))
 
-            trading_pairs.append({
-                "id": pair_id,
-                "base_asset_id": prop_id,
-                "base_asset_symbol": base_asset_symbol,
-                "quote_asset_symbol": quote_asset_symbol,
-                "last_price": round(random.uniform(0.01, 1000), 2),
-                "price_change_24h_percent": round(random.uniform(-10, 10), 2),
-                "high_24h": round(random.uniform(100, 1200), 2),
-                "low_24h": round(random.uniform(0.005, 900), 2),
-                "volume_24h_base": round(random.uniform(10000, 1000000), 2),
-                "volume_24h_quote": round(random.uniform(5000, 500000), 2),
-                "ohlc_history": fake.json(num_rows=5, data_columns=[('open', 'pyfloat'), ('high', 'pyfloat'), ('low', 'pyfloat'), ('close', 'pyfloat')]),
-                "volume_history": fake.json(num_rows=5, data_columns=[('volume', 'pyfloat')]),
-                "is_favorite": fake.boolean(),
-                "order_book_id": fake.uuid4()
-            })
-    return trading_pairs
+            for i in range(num_days):
+                date = start_date + timedelta(days=i)
+                timestamp = date.replace(hour=0, minute=0, second=0, microsecond=0)
 
-def insert_fake_trading_pairs(conn, trading_pairs):
-    """Inserts fake trading pair data."""
-    cursor = conn.cursor()
-    for pair in trading_pairs:
+                open_price = current_price
+                high_price = open_price * Decimal(str(random.uniform(1.01, 1.05)))
+                low_price = open_price * Decimal(str(random.uniform(0.95, 0.99)))
+                close_price = Decimal(str(random.uniform(float(low_price), float(high_price))))
+                volume = Decimal(str(round(random.uniform(1000, 10000), 2)))
+                color = "rgba(0, 150, 136, 1)" if close_price >= open_price else "rgba(255, 82, 82, 1)"
+
+                ohlc_rows.append(OHLCModel(
+                    pair_id=temp_trading_pair_uuid,
+                    time=timestamp,
+                    open=str(open_price),
+                    high=str(high_price),
+                    low=str(low_price),
+                    close=str(close_price)
+                ))
+
+                volume_rows.append(VolumeModel(
+                    pair_id=temp_trading_pair_uuid,
+                    time=timestamp,
+                    value=str(volume),
+                    color=color
+                ))
+
+                current_price = close_price
+
+            model = TradingPairModel(
+                    pairs=pair_name,
+                    base_asset_id=prop[0],
+                    base_asset_symbol=base_symbol,
+                    quote_asset_symbol=quote_symbol,
+                    last_price=json.dumps(current_price, cls=JSONEncoder),
+                    price_change_24h_percent=json.dumps(round(random.uniform(-10, 10), 2), cls=JSONEncoder),
+                    high_24h=json.dumps(current_price * Decimal('1.05'), cls=JSONEncoder),
+                    low_24h=json.dumps(current_price * Decimal('0.95'), cls=JSONEncoder),
+                    volume_24h_base=json.dumps(Decimal(str(round(random.uniform(10000, 1000000), 2))), cls=JSONEncoder),
+                    volume_24h_quote=json.dumps(Decimal(str(round(random.uniform(5000, 500000), 2))), cls=JSONEncoder),
+                    is_favorite=fake.boolean(),
+                    order_book_id=str(uuid.uuid4())
+                )
+            trade_pair_return = TradingPairReturn(trading_pair_model=model, temp_trading_pair_uuid=temp_trading_pair_uuid)
+            trading_pairs.append(trade_pair_return)
+
+    return trading_pairs, ohlc_rows, volume_rows
+
+# --- Insertion Functions ---
+
+def insert_all_trading_data(pairs_with_temp_uuids: List[TradingPairReturn], ohlcs: List[OHLCModel], volumes: List[VolumeModel]):
+    inserted_ids = []
+    temp_to_supabase_id_map = {}
+
+    for pair_entry in pairs_with_temp_uuids:
+        pair_model = pair_entry.trading_pair_model
+        temp_uuid = pair_entry.temp_trading_pair_uuid
         try:
-            cursor.execute(
-                """
-                INSERT INTO public.trading_pairs (
-                    id, base_asset_id, base_asset_symbol, quote_asset_symbol, last_price,
-                    price_change_24h_percent, high_24h, low_24h, volume_24h_base,
-                    volume_24h_quote, ohlc_history, volume_history, is_favorite,
-                    order_book_id, created_at, updated_at
-                )
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now())
-                ON CONFLICT (id) DO UPDATE SET
-                    base_asset_id = EXCLUDED.base_asset_id,
-                    base_asset_symbol = EXCLUDED.base_asset_symbol,
-                    quote_asset_symbol = EXCLUDED.quote_asset_symbol,
-                    last_price = EXCLUDED.last_price,
-                    price_change_24h_percent = EXCLUDED.price_change_24h_percent,
-                    high_24h = EXCLUDED.high_24h,
-                    low_24h = EXCLUDED.low_24h,
-                    volume_24h_base = EXCLUDED.volume_24h_base,
-                    volume_24h_quote = EXCLUDED.volume_24h_quote,
-                    ohlc_history = EXCLUDED.ohlc_history,
-                    volume_history = EXCLUDED.volume_history,
-                    is_favorite = EXCLUDED.is_favorite,
-                    order_book_id = EXCLUDED.order_book_id,
-                    updated_at = now();
-                """,
-                (
-                    pair["id"], pair["base_asset_id"], pair["base_asset_symbol"], pair["quote_asset_symbol"],
-                    pair["last_price"], pair["price_change_24h_percent"], pair["high_24h"], pair["low_24h"],
-                    pair["volume_24h_base"], pair["volume_24h_quote"], pair["ohlc_history"], pair["volume_history"],
-                    pair["is_favorite"], pair["order_book_id"]
-                )
-            )
-            print(f"Inserted trading pair: {pair['id']}")
-        except Error as e:
-            print(f"Error inserting trading pair {pair['id']}: {e}")
-            conn.rollback()
-    conn.commit()
-    cursor.close()
+            pair_data = pair_model.model_dump()
+            # print("pair_data",pair_data)
+            for key in ['last_price', 'price_change_24h_percent', 'high_24h', 'low_24h', 'volume_24h_base', 'volume_24h_quote']:
+                pair_data[key] = float(pair_data[key])
+            # print("PAIR_DATA",pair_data)
+            response = supabase_bot.table("trading_pairs").upsert(pair_model.model_dump()).execute()
+            # print("we did not make it here")
+            inserted = response.data[0]
+            supabase_id = inserted["id"]
+            inserted_ids.append(supabase_id)
+            temp_to_supabase_id_map[temp_uuid] = supabase_id
+            print(f"✅ Inserted pair {pair_model.pairs} with ID: {supabase_id}")
+        except Exception as e:
+            print(f"❌ Error inserting pair {pair_model.pairs}: {e}")
+
+    for row in ohlcs:
+        row.pair_id = temp_to_supabase_id_map.get(row.pair_id, row.pair_id)
+        try:
+            ohlc_dict = row.model_dump(exclude_none=True)
+            # print("ohlc_dict", ohlc_dict)
+            ohlc_dict["time"] = ohlc_dict["time"].isoformat()
+            ohlc_dict["open"] = float(ohlc_dict["open"])
+            ohlc_dict["high"] = float(ohlc_dict["high"])
+            ohlc_dict["low"] = float(ohlc_dict["low"])
+            ohlc_dict["close"] = float(ohlc_dict["close"])
+            supabase_bot.table("ohlc_data").insert(ohlc_dict).execute()
+            # print("ohlc_dict",ohlc_dict)
+
+        except Exception as e:
+            print(f"❌ Error inserting OHLC row: {e}")
+
+    for row in volumes:
+        row.pair_id = temp_to_supabase_id_map.get(row.pair_id, row.pair_id)
+        try:
+            volume_dict = row.model_dump(exclude_none=True)
+            volume_dict["time"] = volume_dict["time"].isoformat()
+            volume_dict["value"] = float(volume_dict["value"])
+            supabase_bot.table("volume_data").insert(volume_dict).execute()
+            # print("volume_dict",volume_dict)
+        except Exception as e:
+            print(f"❌ Error inserting volume row: {e}")
+
+    return inserted_ids
+
+# --- Main Execution ---
 
 if __name__ == "__main__":
-    from dotenv import load_dotenv
-    import os
-    load_dotenv()
-    DATABASE_URL = os.getenv("DATABASE_URL")
-
-    def get_db_connection():
-        if not DATABASE_URL:
-            raise ValueError("DATABASE_URL environment variable not set.")
-        try:
-            conn = psycopg2.connect(DATABASE_URL)
-            return conn
-        except Error as e:
-            print(f"Error connecting to the database: {e}")
-            return None
-
-    conn = None
-    try:
-        conn = get_db_connection()
-        if conn:
-            # Dummy data for testing independently
-            dummy_property_ids = [uuid.uuid4() for _ in range(3)]
-            trading_pairs_data = generate_fake_trading_pairs(dummy_property_ids)
-            insert_fake_trading_pairs(conn, trading_pairs_data)
-            print("Trading pairs data generation and insertion complete.")
-    except ValueError as ve:
-        print(f"Configuration Error: {ve}")
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
-    finally:
-        if conn:
-            conn.close()
-            print("Database connection closed.")
+    dummy_properties = [[str(uuid.uuid4()), str(uuid.uuid4())] for _ in range(3)]
+    pairs_with_temp_uuids, ohlcs, volumes = generate_trading_pair_and_history(dummy_properties)
+    insert_all_trading_data(pairs_with_temp_uuids, ohlcs, volumes)

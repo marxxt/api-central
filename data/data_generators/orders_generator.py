@@ -1,14 +1,29 @@
 import uuid
 import random
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
+from typing import List, Optional
+from pydantic import BaseModel
 from faker import Faker
-import psycopg2
-from psycopg2 import Error
+from db_utils import supabase_bot
 
 fake = Faker()
 
-def generate_fake_orders(user_ids, trading_pair_ids, num_orders_per_user=5):
-    """Generates fake order data."""
+class Order(BaseModel):
+    id: str
+    user_id: str
+    trading_pair_id: str
+    order_type: str  # 'buy' or 'sell'
+    trade_type: str  # 'market' or 'limit'
+    amount: float
+    is_amount_in_base: bool
+    limit_price: Optional[float]
+    status: str
+    filled_amount: float
+    executed_at: datetime
+    created_at: datetime
+    updated_at: datetime
+
+def generate_fake_orders(user_ids: List[str], trading_pair_ids: List[str], num_orders_per_user: int = 5) -> List[Order]:
     orders = []
     order_types = ['buy', 'sell']
     trade_types = ['market', 'limit']
@@ -27,92 +42,43 @@ def generate_fake_orders(user_ids, trading_pair_ids, num_orders_per_user=5):
             limit_price = round(random.uniform(0.5, 100), 2) if trade_type == 'limit' else None
             status = random.choice(statuses)
             filled_amount = amount if status == 'filled' else (round(random.uniform(0, amount), 2) if status == 'partial_fill' else 0.0)
+            executed_at = fake.date_time_between(start_date="-6m", end_date="now", tzinfo=timezone.utc)
+            timestamp = datetime.now(timezone.utc)
 
-            orders.append({
-                
-                "user_id": user_id,
-                "trading_pair_id": trading_pair_id,
-                "order_type": order_type,
-                "trade_type": trade_type,
-                "amount": amount,
-                "is_amount_in_base": is_amount_in_base,
-                "limit_price": limit_price,
-                "status": status,
-                "filled_amount": filled_amount,
-                "executed_at": fake.date_time_between(start_date="-6m", end_date="now", tzinfo=timezone.utc)
-            })
+            orders.append(Order(
+                id=str(uuid.uuid4()),
+                user_id=user_id,
+                trading_pair_id=trading_pair_id,
+                order_type=order_type,
+                trade_type=trade_type,
+                amount=amount,
+                is_amount_in_base=is_amount_in_base,
+                limit_price=limit_price,
+                status=status,
+                filled_amount=filled_amount,
+                executed_at=executed_at,
+                created_at=timestamp,
+                updated_at=timestamp
+            ))
     return orders
 
-def insert_fake_orders(conn, orders):
-    """Inserts fake order data."""
-    cursor = conn.cursor()
+def insert_fake_orders(orders: List[Order]) -> None:
     for order in orders:
         try:
-            cursor.execute(
-                """
-                INSERT INTO public.orders (
-                    id, user_id, trading_pair_id, order_type, trade_type, amount,
-                    is_amount_in_base, limit_price, status, filled_amount,
-                    executed_at, created_at, updated_at
-                )
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now(), now())
-                ON CONFLICT (id) DO UPDATE SET
-                    user_id = EXCLUDED.user_id,
-                    trading_pair_id = EXCLUDED.trading_pair_id,
-                    order_type = EXCLUDED.order_type,
-                    trade_type = EXCLUDED.trade_type,
-                    amount = EXCLUDED.amount,
-                    is_amount_in_base = EXCLUDED.is_amount_in_base,
-                    limit_price = EXCLUDED.limit_price,
-                    status = EXCLUDED.status,
-                    filled_amount = EXCLUDED.filled_amount,
-                    executed_at = EXCLUDED.executed_at,
-                    updated_at = now();
-                """,
-                (
-                    order["id"], order["user_id"], order["trading_pair_id"], order["order_type"],
-                    order["trade_type"], order["amount"], order["is_amount_in_base"],
-                    order["limit_price"], order["status"], order["filled_amount"], order["executed_at"]
-                )
-            )
-            print(f"Inserted order {order['id']} for user {order['user_id']}")
-        except Error as e:
-            print(f"Error inserting order {order['id']} for user {order['user_id']}: {e}")
-            conn.rollback()
-    conn.commit()
-    cursor.close()
+            order_data = order.model_dump()
+            # Convert datetime objects to ISO 8601 strings
+            for key in ['executed_at', 'created_at', 'updated_at']:
+                if isinstance(order_data[key], datetime):
+                    order_data[key] = order_data[key].isoformat()
+
+            supabase_bot.table("orders").upsert(order_data).execute()
+            print(f"✅ Inserted order {order.id} for user {order.user_id}")
+        except Exception as e:
+            print(f"❌ Error inserting order {order.id} for user {order.user_id}: {e}")
 
 if __name__ == "__main__":
-    from dotenv import load_dotenv
-    import os
-    load_dotenv()
-    DATABASE_URL = os.getenv("DATABASE_URL")
-
-    def get_db_connection():
-        if not DATABASE_URL:
-            raise ValueError("DATABASE_URL environment variable not set.")
-        try:
-            conn = psycopg2.connect(DATABASE_URL)
-            return conn
-        except Error as e:
-            print(f"Error connecting to the database: {e}")
-            return None
-
-    conn = None
-    try:
-        conn = get_db_connection()
-        if conn:
-            # Dummy data for testing independently
-            dummy_user_ids = [uuid.uuid4() for _ in range(3)]
-            dummy_trading_pair_ids = ["MBV_USDC", "ETH_USDT"]
-            orders_data = generate_fake_orders(dummy_user_ids, dummy_trading_pair_ids)
-            insert_fake_orders(conn, orders_data)
-            print("Orders data generation and insertion complete.")
-    except ValueError as ve:
-        print(f"Configuration Error: {ve}")
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
-    finally:
-        if conn:
-            conn.close()
-            print("Database connection closed.")
+    dummy_user_ids = [str(uuid.uuid4()) for _ in range(3)]
+    dummy_trading_pair_ids = ["MBV_USDC", "ETH_USDT"]
+    orders_data = generate_fake_orders(dummy_user_ids, dummy_trading_pair_ids)
+    insert_fake_orders(orders_data)
+    print("🏁 Orders data generation and insertion complete.")

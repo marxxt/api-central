@@ -1,83 +1,71 @@
 import uuid
 import random
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
+from typing import List, Tuple
+from pydantic import BaseModel, Field
 from faker import Faker
-import psycopg2
-from psycopg2 import Error
+from db_utils import supabase_bot
 
 fake = Faker()
 
-def generate_fake_transactions(snft_ids, num_transactions_per_snft=3):
-    """Generates fake transaction data."""
+class Transaction(BaseModel):
+    user_id: str
+    snft_id: str # Added snft_id as per schema
+    amount: float
+    asset_type: str = Field(..., pattern="^(TRANSFER|LISTED|LISTING_CANCEL|AUCTIONED|AUCTION_CANCEL|BID_REGISTERED|BID_ACCEPTED)$")
+    transaction_type: str = Field(..., pattern="^(BUY|SELL|TRANSFER|EXCHANGE|MINT|OTHER|UNKNOWN)$")
+    status: str = Field(..., pattern="^(pending|completed|failed|cancelled)$")
+    timestamp: datetime
+
+def generate_fake_transactions(assets: List[Tuple[str, str, str]], count: int = 20) -> List[Transaction]:
     transactions = []
-    transaction_types = ['BUY', 'SELL', 'TRANSFER', 'EXCHANGE', 'MINT', 'OTHER', 'UNKNOWN']
-
-    for snft_id in snft_ids:
-        for _ in range(num_transactions_per_snft):
-            transactions.append({
-                
-                "snft_id": snft_id,
-                "type": random.choice(transaction_types),
-                "amount": round(random.uniform(1, 10000), 2),
-                "timestamp": fake.date_time_between(start_date="-6m", end_date="now", tzinfo=timezone.utc)
-            })
+    for _ in range(count):
+        snft_id, __, user_id = random.choice(assets)
+        tx = Transaction(
+            user_id=user_id, # Changed to use the current user_id from the loop
+            snft_id=snft_id, # Added missing comma
+            amount=round(random.uniform(10.0, 10000.0), 2),
+            asset_type=random.choice(['TRANSFER',
+                'LISTED',
+                'LISTING_CANCEL',
+                'AUCTIONED',
+                'AUCTION_CANCEL',
+                'BID_REGISTERED',
+                'BID_ACCEPTED'
+            ]),
+            transaction_type=random.choice(['BUY', 'SELL', 'TRANSFER', 'EXCHANGE', 'MINT', 'OTHER', 'UNKNOWN']),
+            status=random.choice(['pending', 'completed', 'failed', 'cancelled']),
+            timestamp=fake.date_time_between(start_date="-6m", end_date="now", tzinfo=timezone.utc)
+        ) # Added missing closing parenthesis for Transaction constructor
+        transactions.append(tx)
     return transactions
+   
+    # snft_id uuid REFERENCES public.snfts(id) ON DELETE CASCADE NOT NULL,
+    # user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL, -- Added user_id column
+    # transaction_type text NOT NULL CHECK (transaction_type IN ('BUY', 'SELL', 'TRANSFER', 'EXCHANGE', 'MINT', 'OTHER', 'UNKNOWN')),
+    # asset_type text, -- Added asset_type column
+    # amount numeric,
+    # status text NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'completed', 'failed', 'cancelled')), -- Added status column
+    # timestamp timestamp with time zone DEFAULT now(),
 
-def insert_fake_transactions(conn, transactions):
-    """Inserts fake transaction data."""
-    cursor = conn.cursor()
-    for transaction in transactions:
+    # created_at timestamp with time zone DEFAULT now(),
+    # updated_at 
+
+def insert_fake_transactions(transactions: List[Transaction]) -> None:
+   
+    for tx in transactions:
         try:
-            cursor.execute(
-                """
-                INSERT INTO public.transactions (id, snft_id, type, amount, timestamp, created_at, updated_at)
-                VALUES (%s, %s, %s, %s, %s, now(), now())
-                ON CONFLICT (id) DO UPDATE SET
-                    snft_id = EXCLUDED.snft_id,
-                    type = EXCLUDED.type,
-                    amount = EXCLUDED.amount,
-                    timestamp = EXCLUDED.timestamp,
-                    updated_at = now();
-                """,
-                (transaction["id"], transaction["snft_id"], transaction["type"], transaction["amount"], transaction["timestamp"])
-            )
-            print(f"Inserted transaction {transaction['id']} for SNFT {transaction['snft_id']}")
-        except Error as e:
-            print(f"Error inserting transaction {transaction['id']} for SNFT {transaction['snft_id']}: {e}")
-            conn.rollback()
-    conn.commit()
-    cursor.close()
+            data = tx.model_dump()
+            
+            # Convert datetime object to ISO 8601 string
+            if isinstance(data["timestamp"], datetime):
+                data["timestamp"] = data["timestamp"].isoformat()
+            
+            print("DATA", data)
+            supabase_bot.table("transactions").upsert(data).execute()
+            print(f"✅ Inserted transaction for user {tx.user_id}")
+        except Exception as e:
+            print(f"❌ Error inserting transaction for user {tx.user_id}: {e}")
 
 if __name__ == "__main__":
-    from dotenv import load_dotenv
-    import os
-    load_dotenv()
-    DATABASE_URL = os.getenv("DATABASE_URL")
-
-    def get_db_connection():
-        if not DATABASE_URL:
-            raise ValueError("DATABASE_URL environment variable not set.")
-        try:
-            conn = psycopg2.connect(DATABASE_URL)
-            return conn
-        except Error as e:
-            print(f"Error connecting to the database: {e}")
-            return None
-
-    conn = None
-    try:
-        conn = get_db_connection()
-        if conn:
-            # Dummy data for testing independently
-            dummy_snft_ids = [uuid.uuid4() for _ in range(3)]
-            transactions_data = generate_fake_transactions(dummy_snft_ids)
-            insert_fake_transactions(conn, transactions_data)
-            print("Transactions data generation and insertion complete.")
-    except ValueError as ve:
-        print(f"Configuration Error: {ve}")
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
-    finally:
-        if conn:
-            conn.close()
-            print("Database connection closed.")
+    pass

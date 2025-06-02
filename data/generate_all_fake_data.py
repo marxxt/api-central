@@ -17,13 +17,13 @@ from data_generators.daos_generator import generate_fake_daos, insert_fake_daos
 from data_generators.snfts_generator import generate_fake_snfts, insert_fake_snfts
 from data_generators.auctions_generator import generate_fake_auctions, insert_fake_auctions
 from data_generators.trades_generator import generate_fake_trades, insert_fake_trades
-from data_generators.trading_pairs_generator import generate_fake_trading_pairs, insert_fake_trading_pairs
+from data_generators.trading_pairs_generator import generate_trading_pair_and_history, insert_all_trading_data
 from data_generators.ai_bot_configs_generator import generate_fake_ai_bot_configs, insert_fake_ai_bot_configs
 from data_generators.orders_generator import generate_fake_orders, insert_fake_orders
 from data_generators.user_investments_generator import generate_fake_user_investments, insert_fake_user_investments
 from data_generators.bid_history_generator import generate_fake_bid_history, insert_fake_bid_history
 from data_generators.transactions_generator import generate_fake_transactions, insert_fake_transactions
-from data_generators.dao_proposals_generator import generate_fake_dao_proposals, insert_fake_dao_proposals
+from data_generators.dao_proposals_generator import generate_fake_proposals, insert_fake_proposals
 from data_generators.dao_votes_generator import generate_fake_dao_votes, insert_fake_dao_votes
 from data_generators.user_stats_generator import generate_fake_user_stats, insert_fake_user_stats
 from data_generators.snft_stats_generator import generate_fake_snft_stats, insert_fake_snft_stats
@@ -101,70 +101,63 @@ def main():
             
             # 2. Entities with dependencies on core entities
             print("\n--- Generating SNFTs ---")
-            snfts_data = generate_fake_snfts(wallet_ids, user_ids, collection_ids, property_ids, dao_ids, num_snfts_per_property=1)
+            snfts_data = generate_fake_snfts(wallet_ids, property_ids, collection_ids, dao_ids)
             snft_ids = insert_fake_snfts(snfts_data)
 
             # Update DAOs with SNFT IDs if snft_id is not nullable and you want to link them
             # For now, it's nullable, so we proceed.
 
-            # print("\n--- Generating Auctions ---")
-            # auctions_data = generate_fake_auctions(property_ids, user_ids)
-            # insert_fake_auctions(auctions_data)
-            # auction_ids = [auction["id"] for auction in auctions_data]
+            print("\n--- Generating Auctions ---")
+            auctions_data = generate_fake_auctions(property_ids, user_ids)
+            auction_ids = insert_fake_auctions(auctions_data)
 
-            # print("\n--- Generating Trades ---")
-            # trades_data = generate_fake_trades(user_ids)
-            # insert_fake_trades(trades_data)
+            print("\n--- Generating Trades ---")
+            trades_data = generate_fake_trades(user_ids, snft_ids, 15)
+            insert_fake_trades(trades_data)
 
-            # print("\n--- Generating Trading Pairs ---")
-            # trading_pairs_data = generate_fake_trading_pairs(property_ids)
-            # insert_fake_trading_pairs(trading_pairs_data)
-            # trading_pair_ids = [pair["id"] for pair in trading_pairs_data]
+            print("\n--- Generating Trading Pairs ---")
+            trading_pairs_data, ohlcs, volumes = generate_trading_pair_and_history(property_ids)
+            trading_pair_ids = insert_all_trading_data(trading_pairs_data, ohlcs, volumes)
 
-            # print("\n--- Generating AI Bot Configs ---")
-            # ai_bot_configs_data = generate_fake_ai_bot_configs(user_ids, trading_pair_ids)
-            # insert_fake_ai_bot_configs(ai_bot_configs_data)
+            print("\n--- Generating AI Bot Configs ---")
+            ai_bot_configs_data = generate_fake_ai_bot_configs(user_ids, trading_pair_ids)
+            insert_fake_ai_bot_configs(ai_bot_configs_data)
 
-            # print("\n--- Generating Orders ---")
-            # orders_data = generate_fake_orders(user_ids, trading_pair_ids)
-            # insert_fake_orders(orders_data)
+            print("\n--- Generating Orders ---")
+            orders_data = generate_fake_orders(user_ids, trading_pair_ids)
+            insert_fake_orders(orders_data)
 
-            # print("\n--- Generating User Investments ---")
-            # user_investments_data = generate_fake_user_investments(user_ids, property_ids)
-            # insert_fake_user_investments(user_investments_data)
+            print("\n--- Generating User Investments ---")
+            user_investments_data = generate_fake_user_investments(user_ids, property_ids)
+            insert_fake_user_investments(user_investments_data)
 
-            # print("\n--- Generating Bid History ---")
-            # bid_history_data = generate_fake_bid_history(auction_ids, user_ids)
-            # insert_fake_bid_history(bid_history_data)
+            print("\n--- Generating Bid History ---")
+            bid_history_data = generate_fake_bid_history(auction_ids, user_ids)
+            insert_fake_bid_history(bid_history_data)
 
-            # print("\n--- Generating Transactions ---")
-            # transactions_data = generate_fake_transactions(snft_ids)
-            # insert_fake_transactions(transactions_data)
+            print("\n--- Generating Transactions ---")
+            transactions_data = generate_fake_transactions(snft_ids)
+            insert_fake_transactions(transactions_data)
 
-            # print("\n--- Generating DAO Proposals ---")
-            # dao_proposals_data = generate_fake_dao_proposals(num_proposals=10)
-            # insert_fake_dao_proposals(dao_proposals_data)
-            # dao_proposal_ids = [prop["id"] for prop in dao_proposals_data]
+            print("\n--- Generating DAO Proposals ---")
+            dao_proposals_data, dao_votes_data = generate_fake_proposals(dao_ids, user_ids, num_proposals_per_dao=10)
+            dao_proposal_ids = insert_fake_proposals(dao_proposals_data, dao_votes_data)
 
-            # print("\n--- Generating DAO Votes ---")
-            # dao_votes_data = generate_fake_dao_votes(dao_proposal_ids, user_ids)
-            # insert_fake_dao_votes(dao_votes_data)
+            print("\n--- Generating User Stats ---")
+            user_stats_data = generate_fake_user_stats(user_ids)
+            insert_fake_user_stats(user_stats_data)
 
-            # print("\n--- Generating User Stats ---")
-            # user_stats_data = generate_fake_user_stats(user_ids)
-            # insert_fake_user_stats(user_stats_data)
+            print("\n--- Generating SNFT Stats ---")
+            snft_stats_data = generate_fake_snft_stats(snft_ids)
+            insert_fake_snft_stats(snft_stats_data)
 
-            # print("\n--- Generating SNFT Stats ---")
-            # snft_stats_data = generate_fake_snft_stats(snft_ids)
-            # insert_fake_snft_stats(snft_stats_data)
+            print("\n--- Generating Platform Metrics ---")
+            platform_metrics_data = generate_fake_platform_metrics(user_ids) # Using user_ids as entity_ids for some metrics
+            insert_fake_platform_metrics(platform_metrics_data)
 
-            # print("\n--- Generating Platform Metrics ---")
-            # platform_metrics_data = generate_fake_platform_metrics(user_ids) # Using user_ids as entity_ids for some metrics
-            # insert_fake_platform_metrics(platform_metrics_data)
-
-            # print("\n--- Generating Property Token Ownership ---")
-            # property_token_ownership_data = generate_fake_property_token_ownership(property_ids, wallet_ids)
-            # insert_fake_property_token_ownership(property_token_ownership_data)
+            print("\n--- Generating Property Token Ownership ---")
+            property_token_ownership_data = generate_fake_property_token_ownership(property_ids, wallet_ids)
+            insert_fake_property_token_ownership(property_token_ownership_data)
 
             # print("\n--- Generating Property Token Transfers ---")
             # property_token_transfers_data = generate_fake_property_token_transfers(property_ids, wallet_ids)

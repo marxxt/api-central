@@ -1,86 +1,58 @@
-import uuid
-import random
-from datetime import datetime, timedelta, timezone
+from typing import Annotated, List, Literal, cast
+from pydantic import BaseModel, Field, constr, condecimal
 from faker import Faker
-import psycopg2
-from psycopg2 import Error
+from decimal import Decimal
+import random
+import uuid
+from datetime import datetime, timezone
+from db_utils import supabase_bot  # ✅ Use centralized config
+
+MinLength = Annotated[constr(min_length=1), Field(description="min length 1")]
+PositiveDecimal = Annotated[condecimal(gt=0), Field(description="Decimal value greater than 0")]
 
 fake = Faker()
 
-def generate_fake_trades(user_ids, num_trades_per_user=5):
-    """Generates fake trade data."""
-    trades = []
-    assets = ["MBV", "USDC", "ETH", "BTC"] # Example assets
-    trade_types = ["buy", "sell"]
 
+class TradeModel(BaseModel):
+    user_id: str
+    asset: MinLength
+    type: Literal["buy", "sell"]  # ✅ Clean enum-like validation
+    amount: PositiveDecimal
+    executed_at: datetime
+
+
+def generate_fake_trades(user_ids: List[str], assets, num_trades_per_user: int = 5) -> List[TradeModel]:
+    print(user_ids[0], assets[0])
+    trade_types = ["buy", "sell"]
+    trades = []
     for user_id in user_ids:
         for _ in range(num_trades_per_user):
-            trades.append({
-                
-                "user_id": user_id,
-                "asset": random.choice(assets),
-                "type": random.choice(trade_types),
-                "amount": round(random.uniform(1, 1000), 2),
-                "executed_at": fake.date_time_between(start_date="-6m", end_date="now", tzinfo=timezone.utc)
-            })
+            trade = TradeModel(
+                user_id=user_id,
+                asset=(random.choice(assets))[1],
+                type=cast(Literal["buy", "sell"], random.choice(trade_types)),
+                amount=round(Decimal(random.uniform(1, 1000)), 2),
+                executed_at=fake.date_time_between(start_date="-6m", end_date="now", tzinfo=timezone.utc)
+            )
+            trades.append(trade)
     return trades
 
-def insert_fake_trades(conn, trades):
-    """Inserts fake trade data."""
-    cursor = conn.cursor()
+
+def insert_fake_trades(trades: List[TradeModel]) -> List[str]:
+    inserted_ids = []
     for trade in trades:
         try:
-            cursor.execute(
-                """
-                INSERT INTO public.trades (id, user_id, asset, type, amount, executed_at, created_at, updated_at)
-                VALUES (%s, %s, %s, %s, %s, %s, now(), now())
-                ON CONFLICT (id) DO UPDATE SET
-                    user_id = EXCLUDED.user_id,
-                    asset = EXCLUDED.asset,
-                    type = EXCLUDED.type,
-                    amount = EXCLUDED.amount,
-                    executed_at = EXCLUDED.executed_at,
-                    updated_at = now();
-                """,
-                (trade["id"], trade["user_id"], trade["asset"], trade["type"], trade["amount"], trade["executed_at"])
-            )
-            print(f"Inserted trade for user {trade['user_id']}")
-        except Error as e:
-            print(f"Error inserting trade for user {trade['user_id']}: {e}")
-            conn.rollback()
-    conn.commit()
-    cursor.close()
+            trade_data = trade.model_dump() 
+            trade_data["amount"] = str(trade_data["amount"])  # 🧮 Decimal to str
+            trade_data["executed_at"] = trade_data["executed_at"].isoformat() # Convert datetime to ISO format string
+            response = supabase_bot.table("trades").upsert(trade_data).execute()
+            inserted_id = response.data[0]["id"]
+            print(f"✅ Inserted trade for user {trade.user_id}: {inserted_id}")
+            inserted_ids.append(inserted_id)
+        except Exception as e:
+            print(f"❌ Error inserting trade for user {trade.user_id}: {e}")
+    return inserted_ids
+
 
 if __name__ == "__main__":
-    from dotenv import load_dotenv
-    import os
-    load_dotenv()
-    DATABASE_URL = os.getenv("DATABASE_URL")
-
-    def get_db_connection():
-        if not DATABASE_URL:
-            raise ValueError("DATABASE_URL environment variable not set.")
-        try:
-            conn = psycopg2.connect(DATABASE_URL)
-            return conn
-        except Error as e:
-            print(f"Error connecting to the database: {e}")
-            return None
-
-    conn = None
-    try:
-        conn = get_db_connection()
-        if conn:
-            # Dummy data for testing trades independently
-            dummy_user_ids = [uuid.uuid4() for _ in range(3)]
-            trades_data = generate_fake_trades(dummy_user_ids)
-            insert_fake_trades(conn, trades_data)
-            print("Trades data generation and insertion complete.")
-    except ValueError as ve:
-        print(f"Configuration Error: {ve}")
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
-    finally:
-        if conn:
-            conn.close()
-            print("Database connection closed.")
+    pass

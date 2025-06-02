@@ -199,7 +199,6 @@ CREATE TABLE public.properties (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(), -- From SNFT.id or PropertyMarketplaceItem.id
     user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL, -- Link to the user who owns/listed the property
     name text NOT NULL, -- From SNFT.name or PropertyMarketplaceItem.title
-    token_symbol text NOT NULL, -- e.g., "MBV"
     description text, -- From SNFT.description
     image_url text NOT NULL, -- From SNFT.imageUrl or PropertyMarketplaceItem.image
     address text NOT NULL, -- From SNFT.address or PropertyMarketplaceItem.location
@@ -209,7 +208,6 @@ CREATE TABLE public.properties (
     -- Financials / Tokenomics
     valuation numeric,
     total_tokens numeric,
-    apy numeric,
 
     -- Linking to original SNFT ID if applicable
     underlying_snft_id uuid, -- If this directly maps to an SNFT in your system
@@ -223,11 +221,9 @@ CREATE TABLE public.properties (
 
 -- Add indexes for performance
 DROP INDEX IF EXISTS idx_properties_user_id;
-DROP INDEX IF EXISTS idx_properties_token_symbol;
 DROP INDEX IF EXISTS idx_properties_property_type;
 
 CREATE INDEX idx_properties_user_id ON public.properties (user_id);
-CREATE INDEX idx_properties_token_symbol ON public.properties (token_symbol);
 CREATE INDEX idx_properties_property_type ON public.properties (property_type);
 
 -- Enable Row Level Security
@@ -310,25 +306,40 @@ CREATE TABLE public.snfts (
     name text NOT NULL,
     description text,
     image_url text NOT NULL,
+    token_symbol text NOT NULL,
     price numeric NOT NULL,
     currency text,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone,
     address text NOT NULL,
+    contract_address text, -- Added contract_address column
+    deployed_at timestamp with time zone, -- Added deployed_at column
+    expires_at timestamp with time zone, -- Added expires_at column
     creator text,
     date_listed timestamp with time zone,
     category text,
+    apy numeric,
     collection_id uuid REFERENCES public.collections(id) ON DELETE SET NULL, -- Can be null if collection is deleted
-    bid_price text,
     metadata_status text,
-    numeric_bid_price numeric,
     status text DEFAULT 'draft' CHECK (
         status IN (
             'draft', 'property_added', 'docs_uploaded',
             'pending_signature', 'notarized',
             'metadata_ready', 'minted'
         )
-    )
+    ),
+    property_id uuid REFERENCES public.properties(id) ON DELETE CASCADE,
+    trust_id uuid,
+    total_tokens numeric,
+    tokens_sold integer,
+    token_price numeric,
+    sale_status text,
+    metadata_uri text,
+    metadata_hash text,
+    legal_doc_urls jsonb,
+    notarization_status text,
+    wizard_progress jsonb,
+    preview_uri text
 );
 
 DROP INDEX IF EXISTS idx_snfts_wallet_id;
@@ -461,7 +472,8 @@ CREATE TRIGGER set_trades_timestamp
 DROP TABLE IF EXISTS public.trading_pairs CASCADE;
 
 CREATE TABLE public.trading_pairs (
-    id text PRIMARY KEY, -- e.g., "MBV_USDC"
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    pairs text NOT NULL, -- e.g., "MBV_USDC"
     base_asset_id uuid REFERENCES public.properties(id) ON DELETE CASCADE NOT NULL, -- Links to the PropertyAsset
     base_asset_symbol text NOT NULL, -- PropertyAsset.tokenSymbol
     quote_asset_symbol text NOT NULL, -- e.g., "USDC", "ETH", "USDT"
@@ -519,7 +531,7 @@ DROP TABLE IF EXISTS public.ai_bot_configs CASCADE; -- Uncomment to drop and rec
 CREATE TABLE public.ai_bot_configs (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL, -- Links to the user who configured the bot
-    trading_pair_id text REFERENCES public.trading_pairs(id) ON DELETE CASCADE NOT NULL, -- Links to the trading pair it operates on
+    trading_pair_id uuid REFERENCES public.trading_pairs(id) ON DELETE CASCADE NOT NULL, -- Links to the trading pair it operates on
     strategy text NOT NULL, -- e.g., 'Grid', 'DCA', 'ML_Trend', 'Arbitrage'
     investment_amount numeric NOT NULL, -- Amount allocated
     quote_asset_for_investment text NOT NULL, -- e.g., 'USDC'
@@ -572,7 +584,7 @@ DROP TABLE IF EXISTS public.orders CASCADE; -- Uncomment to drop and recreate
 CREATE TABLE public.orders (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL, -- Links to the user who placed the order
-    trading_pair_id text REFERENCES public.trading_pairs(id) ON DELETE CASCADE NOT NULL, -- Links to the trading pair the order is for
+    trading_pair_id uuid REFERENCES public.trading_pairs(id) ON DELETE CASCADE NOT NULL, -- Links to the trading pair the order is for
     order_type text NOT NULL CHECK (order_type IN ('buy', 'sell')), -- 'buy' or 'sell'
     trade_type text NOT NULL CHECK (trade_type IN ('market', 'limit')), -- 'market' or 'limit'
     amount numeric NOT NULL, -- The total size of the order (base asset or quote asset)
@@ -581,6 +593,7 @@ CREATE TABLE public.orders (
     status text NOT NULL DEFAULT 'open' CHECK (status IN ('open', 'filled', 'cancelled', 'partial_fill', 'expired')), -- Order status
     filled_amount numeric DEFAULT 0.0 NOT NULL, -- How much of the amount has been filled
     executed_at timestamp with time zone DEFAULT now() NOT NULL, -- Timestamp when the order was placed
+    created_at timestamp with time zone DEFAULT now() NOT NULL, -- Timestamp when the order was created
     updated_at timestamp with time zone -- Timestamp of last status/fill update
 );
 
@@ -731,8 +744,17 @@ DROP TABLE IF EXISTS public.transactions CASCADE;
 CREATE TABLE public.transactions (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     snft_id uuid REFERENCES public.snfts(id) ON DELETE CASCADE NOT NULL,
-    type text NOT NULL CHECK (type IN ('BUY', 'SELL', 'TRANSFER', 'EXCHANGE', 'MINT', 'OTHER', 'UNKNOWN')),
+    user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL, -- Added user_id column
+    transaction_type text NOT NULL CHECK (transaction_type IN ('BUY', 'SELL', 'TRANSFER', 'EXCHANGE', 'MINT', 'OTHER', 'UNKNOWN')),
+    asset_type text NOT NULL CHECK (asset_type IN ('TRANSFER',
+  'LISTED',
+  'LISTING_CANCEL',
+  'AUCTIONED',
+  'AUCTION_CANCEL',
+  'BID_REGISTERED',
+  'BID_ACCEPTED')),
     amount numeric,
+    status text NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'completed', 'failed', 'cancelled')), -- Added status column
     timestamp timestamp with time zone DEFAULT now(),
 
     created_at timestamp with time zone DEFAULT now(),
@@ -740,10 +762,10 @@ CREATE TABLE public.transactions (
 );
 
 DROP INDEX IF EXISTS idx_transactions_snft_id;
-DROP INDEX IF EXISTS idx_transactions_type;
+DROP INDEX IF EXISTS idx_transactions_transactions_type;
 
 CREATE INDEX idx_transactions_snft_id ON public.transactions (snft_id);
-CREATE INDEX idx_transactions_type ON public.transactions (type);
+CREATE INDEX idx_transactions_transactions_type ON public.transactions (transaction_type);
 
 ALTER TABLE public.transactions ENABLE ROW LEVEL SECURITY;
 
@@ -768,12 +790,18 @@ CREATE TRIGGER set_transactions_timestamp
 DROP TABLE IF EXISTS public.dao_proposals CASCADE;
 
 CREATE TABLE public.dao_proposals (
-    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    title text NOT NULL,
-    description text,
-    created_at timestamp with time zone DEFAULT now() NOT NULL,
-    updated_at timestamp with time zone
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT NOT NULL,                            -- from ProposalSchema
+    description TEXT,
+    start_date TIMESTAMPTZ NOT NULL,               -- z.instanceof(Timestamp)
+    end_date TIMESTAMPTZ NOT NULL,
+    passed BOOLEAN NOT NULL,
+    value NUMERIC NOT NULL,
+    dao UUID REFERENCES public.daos(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT now()
 );
+
 
 DROP INDEX IF EXISTS idx_dao_proposals_created_at;
 
@@ -1042,7 +1070,7 @@ CREATE POLICY "Users can delete their own platform metrics" ON public.platform_m
     FOR DELETE USING (auth.uid() = entity_id);
 
 ALTER TABLE public.snfts
-ADD COLUMN property_id uuid REFERENCES public.properties(id) ON DELETE CASCADE;
+ADD COLUMN IF NOT EXISTS property_id uuid REFERENCES public.properties(id) ON DELETE CASCADE;
 
 DROP TABLE IF EXISTS public.property_token_ownership CASCADE;
 
@@ -1070,8 +1098,6 @@ CREATE TABLE public.property_token_transfers (
     timestamp timestamp with time zone DEFAULT now()
 );
 
-ALTER TABLE public.snfts
-ADD COLUMN contract_address text UNIQUE NOT NULL;
 
 -- Create main Contractor table 
 -- Create main Contractor table
@@ -1139,13 +1165,8 @@ CREATE TABLE public.dao_token_holdings (
 
 
 ALTER TABLE public.snfts
-ADD COLUMN trust_id uuid; -- Optional if tracked off-chain or abstracted
+ADD COLUMN IF NOT EXISTS trust_id uuid; -- Optional if tracked off-chain or abstracted
 
-ALTER TABLE public.snfts
-ADD COLUMN total_tokens bigint NOT NULL DEFAULT 100000,
-ADD COLUMN tokens_sold bigint DEFAULT 0,
-ADD COLUMN token_price numeric, -- Fixed price per token (optional)
-ADD COLUMN sale_status text CHECK (sale_status IN ('open', 'closed', 'paused'));
 
 DROP TABLE IF EXISTS public.snft_balances CASCADE;
 
@@ -1174,12 +1195,6 @@ CREATE TABLE public.snft_mint_events (
 );
 
 
-ALTER TABLE public.snfts
-ADD COLUMN metadata_uri text,
-ADD COLUMN metadata_hash text,
-ADD COLUMN legal_doc_urls jsonb,        -- { trust_agreement: "...", dao_agreement: "..." }
-ADD COLUMN notarization_status text,    -- pending, complete, rejected
-ADD COLUMN wizard_progress jsonb;       -- { step: 2, completed: ["property", "images"] }
 
 -- ===============================================================
 -- ENHANCEMENTS: SNFT Creation Audit, Contract Sync, Preview Link, Auto-Expire
@@ -1205,9 +1220,6 @@ CREATE INDEX idx_snft_events_event_type ON public.snft_events (event_type);
 -- 2. CALLBACK-BASED CONTRACT SYNC
 -- Triggered manually or from deployment scripts
 -- Update snfts table with deployed contract address and deployment timestamp
-ALTER TABLE public.snfts
-    ADD COLUMN IF NOT EXISTS contract_address text,
-    ADD COLUMN IF NOT EXISTS deployed_at timestamp with time zone;
 
 -- 3. PREVIEW METADATA URI
 -- Temporary preview URL stored before permanent IPFS pin
@@ -1216,9 +1228,6 @@ ALTER TABLE public.snfts
 
 -- 4. AUTO-EXPIRE DRAFT SNFTS
 -- Add expiration timestamp
-ALTER TABLE public.snfts
-    ADD COLUMN IF NOT EXISTS expires_at timestamp with time zone
-        DEFAULT (now() + interval '7 days');
 
 -- Optional: Mark expired drafts with a scheduled CRON or background job
 UPDATE public.snfts SET status = 'expired' WHERE status = 'draft' AND expires_at < now();
